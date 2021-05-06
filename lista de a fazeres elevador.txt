@@ -1,0 +1,3 @@
+1-Adicionar o sistema de pedidos inteligente(antes de escolher um pedido comparar o módulo da distância do andar atual ao andar de origem de cada pedido na lista, caso haja mas de um na mesma distância optar pelo menor módulo da distância da origem ao destino, ou seja viagem mais curta, após atender ao pedido nulificar o valor [lembre-se de usar if else para previnir comparação com nulo ao decidir o pedido com a origem mais próxima])
+2-Consertar o 9ºandar 
+3-Remover whatsapp (esconder)
