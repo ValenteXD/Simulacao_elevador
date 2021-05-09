@@ -7,13 +7,37 @@ local pedidos = {}
 function leitura_pedidos(nome)
   local file = io.open(nome, 'r')
   local destino
-  
+  local pedido_elev
+  local lista_subida = {}
+  local lista_descida = {}
   for line in file:lines() do
-    destino = tonumber(line:sub(1))
-    
-    table.insert(pedidos, destino)
+    pedido_elev = tonumber(line:sub(1,1))
+    destino = tonumber(line:sub(3,3))
+    if pedido_elev > destino then
+      table.insert(lista_descida, pedido_elev)
+      table.insert(lista_descida, destino)
+    else
+      table.insert(lista_subida, pedido_elev)
+      table.insert(lista_subida, destino)
+    end
   end
-  --table.sort(pedidos)   --O programa ordena do menor para o maior
+  
+  table.sort(lista_subida)
+  table.sort(lista_descida, function(a,b)
+    return a > b
+  end)
+  
+  for i=1, #lista_subida do
+    if lista_subida[i] ~= pedidos[#pedidos] then
+      table.insert(pedidos, lista_subida[i])
+    end
+  end
+  for i=1, #lista_descida do
+    if lista_descida[i] ~= pedidos[pedidos] then
+      table.insert(pedidos, lista_descida[i])
+    end
+  end
+  
   file:close()
 end
 
@@ -68,8 +92,9 @@ function elevador.load()
 end
 function andares()
   chao = (y_Tela-100)/2
-  for i = 0, 9 do
+  for i = 0, 8 do
   tabela_Andar[i] = chao + 300*(i-1)
+  tabela_Andar[9] = 300*8
   end
 end
 function elevador.update(dt)
@@ -110,7 +135,11 @@ function elevador.update(dt)
   
   --Reconhecedor de andar atual--
   if subida == true and descida == false then
-    if cam_y > 300 * andar_atual then
+    if andar_atual == 8 then
+      if pos_y < 53 then
+        andar_atual = andar_atual + 1
+      end
+    elseif cam_y > 300 * andar_atual then
       andar_atual = andar_atual + 1
     end
   elseif subida == false and descida == true then
@@ -134,7 +163,13 @@ function elevador.update(dt)
   elseif andar_atual == pedidos[indice_andar] then
     if cam_y >= tabela_Andar[andar_pedido] - 75 then
       acel = -150
-      if cam_y >= tabela_Andar[andar_pedido] then
+      
+      if andar_pedido == 9 then
+        if cam_y==2400 and pos_y<=250 then
+          subida = false
+          timer = timer + dt
+        end
+      elseif cam_y >= tabela_Andar[andar_pedido] then
         subida = false
         timer = timer + dt
       end
@@ -154,7 +189,8 @@ function elevador.update(dt)
   
   -- Movimento p/ Cima --
   if subida == true then
-    if pos_y < 300 then
+    if pos_y <= 300 and cam_y < 2400 then
+      pos_y = 300
       cam_y = cam_y + vel_y * dt
       if cam_y > 2400 then
           pos_y = pos_y - vel_y * dt
@@ -163,8 +199,11 @@ function elevador.update(dt)
       pos_y = pos_y - vel_y * dt
     end
   -- Movimento p/ Baixo--
-  elseif descida == true then
-    if cam_y > 0 then
+elseif descida == true then
+    if pos_y < 300 then
+      pos_y = pos_y + vel_y * dt
+    elseif cam_y > 0  and pos_y >= 300 then
+      pos_y = 300
       cam_y = cam_y - vel_y * dt
     else
       pos_y = pos_y + vel_y * dt
@@ -188,7 +227,7 @@ function elevador.update(dt)
   if cam_y > 2400 then
     cam_y = 2400
   end
-  if pos_y <= 50 and cam_y >= 2350 then
+  if pos_y < 50 and cam_y > 2350 then
     pos_y = 50
   end
 end

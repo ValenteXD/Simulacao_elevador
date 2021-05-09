@@ -66,9 +66,10 @@ function cenario.draw()
   lg.draw(fundo2, 479, 2400, 0, 10, -600*9)
 
   andar.draw()
-  lg.setColor( 1, 1, 1)
-  lg.draw(img, whats[frame], 700, -cam_y + 500, 0, 5, 5)
-  
+  if active then
+    lg.setColor( 1, 1, 1)
+    lg.draw(img, whats[frame], 700, -cam_y + 500, 0, 5, 5)
+  end
   --[[lg.setColor(1,0,1)
   lg.print(pos_y, 0, -cam_y)
   lg.print(cam_y, 0, -cam_y+15)

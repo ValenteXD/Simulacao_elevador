@@ -1,0 +1,39 @@
+function leitura_pedidos(nome)
+  local file = io.open(nome, 'r')
+  local destino
+  local pedido_elev
+  local lista_subida = {}
+  local lista_descida = {}
+  
+  for line in file:lines() do
+    pedido_elev = tonumber(line:sub(1,1))
+    destino = tonumber(line:sub(3,3))
+    --table.insert(pedidos, destino)
+    --table.insert(pedidos, pedido_elev)
+    if pedido_elev > destino then
+      table.insert(lista_descida, pedido_elev)
+      table.insert(lista_descida, destino)
+    else
+      table.insert(lista_subida, pedido_elev)
+      table.insert(lista_subida, destino)
+    end
+  end
+  
+  table.sort(lista_subida)
+  table.sort(lista_descida, function(a,b)
+    return a > b
+  end)
+  
+  for i=1, #lista_subida do
+    if lista_subida[i] ~= pedidos[#pedidos] then
+      table.insert(pedidos, lista_subida[i])
+    end
+  end
+  for i=1, #lista_descida do
+    if lista_descida[i] ~= pedidos[pedidos] then
+      table.insert(pedidos, lista_descida[i])
+    end
+  end
+  
+  file:close()
+end

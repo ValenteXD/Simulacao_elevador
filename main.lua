@@ -19,13 +19,13 @@ function love.draw()
   cenario.draw()
 end
 
-
-function love.keyreleased(key)
-  elevador.keyreleased(key)
-  
-  end
 function love.keypressed(key, scancode, isrepeat)
-  elevador.keypressed(key, scancode, isrepeat)
+  whatsapp.keypressed(key)
+  if key=='r' then
+    love.event.quit('restart')
+  elseif key =='escape' then
+    love.event.quit()
+  end
 end
 function love.mousepressed(x,y, button)
   whatsapp.mousepressed(x,y,button)
