@@ -3,6 +3,8 @@ local andar = require 'andar'
 local whatsapp = require 'whatsapp'
 local animacao = {}
 local pedidos = {}
+local arquivo_csv = {}
+local timer_global = 0
 
 function leitura_pedidos(nome)
   local file = io.open(nome, 'r')
@@ -42,6 +44,17 @@ function leitura_pedidos(nome)
 end
 
 
+local function gera_csv(nome)
+  arquivo_csv = io.open(nome, 'w')
+  arquivo_csv:write('Tempo;Altura;Velocidade\n')
+end
+local function adiciona_csv(tempo, altura, velocidade)
+  local line_tempo = tostring(tempo):gsub('%.',',')
+  local line_altura = tostring(altura):gsub('%.',',')
+  local line_velocidade = tostring(velocidade):gsub('%.',',')
+  local line = line_tempo .. ';' .. line_altura .. ';' .. line_velocidade .. '\n'
+  arquivo_csv:write(line)
+end
 function elevador.load()
   -- Atributos elevador--
   pos_y = 350
@@ -52,7 +65,7 @@ function elevador.load()
   portadir_x = 405
   portaesq_x = 330
   cam_y = 0
-
+  
   love.keyboard.setKeyRepeat(true)
   movendo = false
   subida = false 
@@ -60,6 +73,10 @@ function elevador.load()
   fechado = true
   fechar_elev = false
   abrir_elev = false
+  key_origem = nil
+  key_destino = nil
+  mov = true
+  arquivo_fechado = false
   
   --Reconhecedor andar--
   leitura_pedidos('pedidos.txt')
@@ -89,6 +106,18 @@ function elevador.load()
   animacao_Timer = 0
   frame = 1
   tempo_andar = 0
+  
+  --Csv--
+  gera_csv('dados.csv')
+end
+function elevador.keypressed(key)
+  if key >= '0' and key <= '9' then
+    if key_origem then
+      key_origem = tonumber(key)
+    elseif key_destino then
+      key_destino = tonumber(key)
+    end
+  end
 end
 function andares()
   chao = (y_Tela-100)/2
@@ -101,6 +130,12 @@ function elevador.update(dt)
   local lk = love.keyboard
   
   andares()
+  
+  timer_global = timer_global + dt
+  
+  if not arquivo_fechado then
+    adiciona_csv(timer_global, 350 - (pos_y - cam_y), vel_y)
+  end
   
   -- Mov. elevador --
   vel_y = vel_y + acel*dt
@@ -126,63 +161,74 @@ function elevador.update(dt)
     end
   elseif timer >= 5 then
     indice_andar = indice_andar + 1
-    if indice_andar > #pedidos then
-      pedidos[indice_andar] = 0
+    if not arquivo_fechado then
+      if indice_andar >= #pedidos + 1 then
+        vel_y = 0
+        mov = false
+        arquivo_csv:close()
+        arquivo_fechado = true
+      else
+        andar_pedido = andar_atual + ( pedidos[indice_andar] - andar_atual)
+        timer = 0
+      end
     end
-    andar_pedido = andar_atual + ( pedidos[indice_andar] - andar_atual)
-    timer = 0
   end
-  
+
   --Reconhecedor de andar atual--
   if subida == true and descida == false then
     if andar_atual == 8 then
       if pos_y < 53 then
         andar_atual = andar_atual + 1
       end
-    elseif cam_y > 300 * andar_atual then
+    elseif cam_y >= 300 * andar_atual then
       andar_atual = andar_atual + 1
     end
   elseif subida == false and descida == true then
     if andar_pedido == 0 then
-      if cam_y < (300 * andar_atual) - 300 then
+      if cam_y <= (300 * andar_atual) - 300 then
         tempo_andar = tempo_andar + dt
         if tempo_andar >= 0.5 then
           andar_atual = andar_atual - 1
         end
       end
-    elseif cam_y < (300 * andar_atual) -375 then
+    elseif cam_y <= (300 * andar_atual) -375 then
       andar_atual = andar_atual - 1
     end
   end
   
   -- Parametros para o movimento e animacao --
-  if andar_atual < pedidos[indice_andar] then
-    subida = true
-    descida = false
-    acel = 50
-  elseif andar_atual == pedidos[indice_andar] then
-    if cam_y >= tabela_Andar[andar_pedido] - 75 then
-      acel = -150
-      
-      if andar_pedido == 9 then
-        if cam_y==2400 and pos_y<=250 then
+  if mov == true then
+    if andar_atual < pedidos[indice_andar] then
+      subida = true
+      descida = false
+      acel = 50
+    elseif andar_atual == pedidos[indice_andar] then
+      if cam_y >= tabela_Andar[andar_pedido] - 75 then
+        acel = -150
+        if andar_pedido == 9 then
+          if cam_y == 2400 and pos_y <= 250 then
+            subida = false
+            timer = timer + dt
+          end
+        elseif cam_y ~= 0 and cam_y > tabela_Andar[andar_pedido] then
           subida = false
           timer = timer + dt
         end
-      elseif cam_y >= tabela_Andar[andar_pedido] then
-        subida = false
-        timer = timer + dt
+        if andar_pedido == 0 then
+          if pos_y == 350 then
+            timer = timer + dt
+          end
+        end
       end
-    end
-  else 
-    descida = true
-    subida = false
-    acel = 50
-    if cam_y <= tabela_Andar[andar_pedido] + 75 then
-      acel = -150
-      if cam_y <= tabela_Andar[andar_pedido] then
-        descida = false
-        timer = timer + dt
+    else 
+      descida = true
+      subida = false
+      acel = 50
+      if cam_y <= tabela_Andar[andar_pedido] + 75 then
+        acel = -150
+        if cam_y == tabela_Andar[andar_pedido] then
+          descida = false
+        end
       end
     end
   end
@@ -219,15 +265,18 @@ elseif descida == true then
   end
   
   -- Limite de Posicao e Camera--
-  if pos_y > 350 then
+  if pos_y >= 350 then
     pos_y = 350
     cam_y = 0
     descida = false
   end
-  if cam_y > 2400 then
+  if cam_y < 0  then
+    cam_y = 0
+  end
+  if cam_y >= 2400 then
     cam_y = 2400
   end
-  if pos_y < 50 and cam_y > 2350 then
+  if pos_y <= 50 and cam_y >= 2350 then
     pos_y = 50
   end
 end
