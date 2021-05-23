@@ -137,6 +137,10 @@ function elevador.keypressed(key)
     end
   end
   print(key_origem, key_destino)
+  --saída--
+  if key == 'escape' then
+    vai_para_menu()
+  end
 end
 function andares()
   chao = (y_Tela-100)/2
