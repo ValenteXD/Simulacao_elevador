@@ -6,29 +6,22 @@ local pedidos = {}
 local arquivo_csv = {}
 local timer_global = 0
 
-function leitura_pedidos(nome)
-  local file = io.open(nome, 'r')
-  local destino
-  local pedido_elev
+function organiza_pedidos(origem, destino)
   local lista_subida = {}
   local lista_descida = {}
-  for line in file:lines() do
-    pedido_elev = tonumber(line:sub(1,1))
-    destino = tonumber(line:sub(3,3))
-    if pedido_elev > destino then
-      table.insert(lista_descida, pedido_elev)
-      table.insert(lista_descida, destino)
-    else
-      table.insert(lista_subida, pedido_elev)
-      table.insert(lista_subida, destino)
-    end
-  end
   
+  if origem > destino then
+    table.insert(lista_descida, origem)
+    table.insert(lista_descida, destino)
+  else
+    table.insert(lista_subida, origem)
+    table.insert(lista_subida, destino)
+  end
   table.sort(lista_subida)
   table.sort(lista_descida, function(a,b)
     return a > b
   end)
-  
+    
   for i=1, #lista_subida do
     if lista_subida[i] ~= pedidos[#pedidos] then
       table.insert(pedidos, lista_subida[i])
@@ -39,10 +32,19 @@ function leitura_pedidos(nome)
       table.insert(pedidos, lista_descida[i])
     end
   end
-  
-  file:close()
 end
 
+function leitura_pedidos(nome)
+  local file = io.open(nome, 'r')
+  local destino
+  local pedido_elev
+  for line in file:lines() do
+    pedido_elev = tonumber(line:sub(1,1))
+    destino = tonumber(line:sub(3,3))
+    organiza_pedidos(pedido_elev, destino)
+  end
+  file:close()
+end
 
 local function gera_csv(nome)
   arquivo_csv = io.open(nome, 'w')
@@ -65,6 +67,7 @@ function elevador.load()
   portadir_x = 405
   portaesq_x = 330
   cam_y = 0
+  timer_debounce = 0
   
   love.keyboard.setKeyRepeat(true)
   movendo = false
@@ -76,7 +79,10 @@ function elevador.load()
   key_origem = nil
   key_destino = nil
   mov = true
+  debounce = false
   arquivo_fechado = false
+  organiza = false
+  
   
   --Reconhecedor andar--
   leitura_pedidos('pedidos.txt')
@@ -112,12 +118,25 @@ function elevador.load()
 end
 function elevador.keypressed(key)
   if key >= '0' and key <= '9' then
-    if key_origem then
+    debounce = true
+    if key_origem == nil then
       key_origem = tonumber(key)
-    elseif key_destino then
+    elseif key_destino == nil then
       key_destino = tonumber(key)
     end
+
+    if organiza == true then
+      if key_destino then
+        organiza_pedidos(key_origem, key_destino)
+        organiza = false
+        if mov == false then
+          --mov = true
+          --andar_pedido = andar_atual + ( pedidos[indice_andar] - andar_atual)
+        end
+      end
+    end
   end
+  print(key_origem, key_destino)
 end
 function andares()
   chao = (y_Tela-100)/2
@@ -132,6 +151,19 @@ function elevador.update(dt)
   andares()
   
   timer_global = timer_global + dt
+  
+  if debounce == true then
+    timer_debounce = timer_debounce + dt
+    if timer_debounce > 2 then
+      key_origem = nil
+      key_destino = nil
+      timer_debounce = 0
+      debounce = false
+      organiza = false
+    elseif timer_debounce < 2 then
+      organiza = true
+    end
+  end
   
   if not arquivo_fechado then
     adiciona_csv(timer_global, 350 - (pos_y - cam_y), vel_y)
@@ -169,8 +201,8 @@ function elevador.update(dt)
         arquivo_fechado = true
       else
         andar_pedido = andar_atual + ( pedidos[indice_andar] - andar_atual)
-        timer = 0
       end
+      timer = 0
     end
   end
 
@@ -226,8 +258,9 @@ function elevador.update(dt)
       acel = 50
       if cam_y <= tabela_Andar[andar_pedido] + 75 then
         acel = -150
-        if cam_y == tabela_Andar[andar_pedido] then
+        if cam_y <= tabela_Andar[andar_pedido] then
           descida = false
+          timer = timer + dt
         end
       end
     end
