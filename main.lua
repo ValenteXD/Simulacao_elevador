@@ -51,7 +51,6 @@ end
 function love.keypressed(key, scancode, isrepeat)
   whatsapp.keypressed(key)
   estado.keypressed(key)
-  --elevador.keypressed(key)
   if key=='r' then
     love.event.quit('restart')
   end
