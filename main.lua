@@ -10,8 +10,18 @@ function vai_para_menu()
   menu.load()
   musica_fundo:pause()
 end
-function vai_para_sim()
+function vai_para_online()
   estado = elevador
+  elevador.online = true
+  elevador.offline = false
+  sim = true
+  elevador.load()
+  cenario.load()
+end
+function vai_para_offline()
+  estado = elevador
+  elevador.online = false
+  elevador.offline = true
   sim = true
   elevador.load()
   cenario.load()
@@ -41,6 +51,7 @@ end
 function love.keypressed(key, scancode, isrepeat)
   whatsapp.keypressed(key)
   estado.keypressed(key)
+  --elevador.keypressed(key)
   if key=='r' then
     love.event.quit('restart')
   end
