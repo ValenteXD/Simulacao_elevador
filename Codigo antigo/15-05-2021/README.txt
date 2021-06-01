@@ -1,0 +1,1 @@
+Clicar no simbolo do whatsapp com o mouse para o acesso a outros audios

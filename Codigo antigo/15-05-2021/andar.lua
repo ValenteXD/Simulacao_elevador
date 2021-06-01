@@ -1,6 +1,5 @@
 local andar = {}
 local zap = {}
-local r = 0
 
 function andar.load()
   -- Atributos cenario--
@@ -19,17 +18,9 @@ function andar.load()
   chao_img = love.graphics.newImage('Assets/Sprites/SpriteSheets/Chao.png')
   flor_img = love.graphics.newImage('Assets/Sprites/SpriteSheets/Flor.png')
   mesa_img = love.graphics.newImage('Assets/Sprites/SpriteSheets/Mesa.png')
-  
-  eletrica = love.graphics.newImage('Assets/Sprites/SpriteSheets/Casa_de_Maquinas/eletrica.png')
-  motor = love.graphics.newImage('Assets/Sprites/SpriteSheets/Casa_de_Maquinas/motor.png')
-  polia = love.graphics.newImage('Assets/Sprites/SpriteSheets/Casa_de_Maquinas/polia.png')
-  polia_2 = love.graphics.newImage('Assets/Sprites/SpriteSheets/Casa_de_Maquinas/polia_2.png')
-  fundo_maquinas = love.graphics.newImage('Assets/Sprites/SpriteSheets/Casa_de_Maquinas/fundo_maquinas.png')
 
 end
-function andar.update(dt)
-  r = r + 1*dt
-end
+
 function andar.draw()
   local lg = love.graphics
   local chao = (y_Tela-100)/2
@@ -90,28 +81,9 @@ function andar.draw()
         
         --Vaso
         lg.draw(flor_img, 240, 440, 0, 4, 4)
-        
       end
     end
   end
-  -- fundo --
-  lg.setColor(1,1,1)
-  lg.draw(fundo_maquinas, 0, -2700)
-  
-  --chao--
-  lg.draw(chao_img , x_tela/2, chao - 2700, 0 , 1, 1, chao_img:getWidth()/2, 0)
-  
-  -- Motor --
-  lg.setColor(1,1,1)
-  lg.draw(motor, 550, 358 - 3000, 0, 12, 12)
-  
-  -- Eletrica --
-  lg.draw(eletrica, 160, 400 - 3000, 0, 8, 8)
-  
-  -- Polias --
-  lg.draw(polia, 405, 500 - 3000, r, 6, 6, 15/2, 15/2)
-  lg.draw(polia_2, 360, 460 - 3000, 0, 6, 6)
-  
   andar(9)
 end
 

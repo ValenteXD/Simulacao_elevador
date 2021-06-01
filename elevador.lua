@@ -2,26 +2,38 @@ local elevador = {}
 local andar = require 'andar'
 local whatsapp = require 'whatsapp'
 local animacao = {}
-local pedidos = {}
+local pedidos = {0,}
 local arquivo_csv = {}
 local timer_global = 0
 
-function organiza_pedidos(origem, destino)
+pedidos_online = false
+pedidos_offline = false
+function leitura_pedidos(nome)
+  local file = io.open(nome, 'r')
+  local destino
+  local pedido_elev
   local lista_subida = {}
   local lista_descida = {}
   
-  if origem > destino then
-    table.insert(lista_descida, origem)
-    table.insert(lista_descida, destino)
-  else
-    table.insert(lista_subida, origem)
-    table.insert(lista_subida, destino)
+  for line in file:lines() do
+    pedido_elev = tonumber(line:sub(1,1))
+    destino = tonumber(line:sub(3,3))
+    --table.insert(pedidos, destino)
+    --table.insert(pedidos, pedido_elev)
+    if pedido_elev > destino then
+      table.insert(lista_descida, pedido_elev)
+      table.insert(lista_descida, destino)
+    else
+      table.insert(lista_subida, pedido_elev)
+      table.insert(lista_subida, destino)
+    end
   end
+  
   table.sort(lista_subida)
   table.sort(lista_descida, function(a,b)
     return a > b
   end)
-    
+  
   for i=1, #lista_subida do
     if lista_subida[i] ~= pedidos[#pedidos] then
       table.insert(pedidos, lista_subida[i])
@@ -32,20 +44,255 @@ function organiza_pedidos(origem, destino)
       table.insert(pedidos, lista_descida[i])
     end
   end
-end
-
-function leitura_pedidos(nome)
-  local file = io.open(nome, 'r')
-  local destino
-  local pedido_elev
-  for line in file:lines() do
-    pedido_elev = tonumber(line:sub(1,1))
-    destino = tonumber(line:sub(3,3))
-    organiza_pedidos(pedido_elev, destino)
-  end
+    
   file:close()
 end
-
+function organiza_pedidos(origem, destino)
+  local lista_subida = {}
+  local lista_descida = {}
+  local lista_complementar = {}
+  
+  function andar_nao_listado(andar)
+    for i=1, #pedidos do
+      if andar == pedidos[i] then
+        return false
+      end
+    end
+    return true
+  end
+  
+  function unificador(lista_subida, lista_descida)
+    for i=1, #lista_subida do
+      if lista_subida[i] ~= pedidos[#pedidos] then
+        table.insert(pedidos, lista_subida[i])
+      end
+    end
+    for i=1, #lista_descida do
+      if lista_descida[i] ~= pedidos[pedidos] then
+        table.insert(pedidos, lista_descida[i])
+      end
+    end
+  end
+  
+  if pedidos_online == true then
+    local function separador_pedidos()
+      local inicia_subindo = false
+      local preencheu_subida = false
+      local preencheu_descida = false
+      local ultimo_preenchido
+      
+      if #pedidos <= 1 then
+        table.insert(lista_subida, pedidos[1])
+      else
+        if pedidos[1] < pedidos[2] then
+          table.insert(lista_subida, pedidos[1])
+          preenchido = 's'
+          inicia_subindo = true
+        else
+          table.insert(lista_descida, pedidos[1])
+          preenchido = 'd'
+          inicia_subindo = false
+        end
+      end
+      for i = 2, #pedidos - 1 do
+        if pedidos[i] < pedidos[i+1] then
+          
+          if not inicia_subindo then
+            preencheu_subida = true
+          end
+          
+          if preencheu_descida then
+            table.insert(lista_complementar, pedidos[i])
+            ultimo_preenchido = 'c'
+          else
+            table.insert(lista_subida, pedidos[i])
+            ultimo_preenchido = 's'
+          end
+        else
+          if inicia_subindo then
+            preencheu_descida = true
+          end
+          
+          if preencheu_subida then
+            table.insert(lista_complementar, pedidos[i])
+            ultimo_preenchido = 'c'
+          else
+            table.insert(lista_descida, pedidos[i])
+            ultimo_preenchido = 'd'
+          end
+        end
+      end
+      if #pedidos >= 2 then
+        local ultimo = pedidos[#pedidos]
+        if ultimo_preenchido == 'c' then
+          table.insert(lista_complementar, ultimo)
+        elseif ultimo_preenchido == 'd' then
+          table.insert(lista_descida, ultimo)
+        else
+          table.insert(lista_subida, ultimo)
+        end
+      end
+      return lista_subida, lista_descida, lista_complementar
+    end
+    
+    local function unificador_pedidos(primeira, segunda, lista_complementar)
+      
+      pedidos = {}
+      
+      for i = 1, #primeira do
+        table.insert(pedidos, primeira[i])
+      end
+      
+      for i = 1, #segunda do
+        table.insert(pedidos, segunda[i])
+      end
+      
+      for i = 1, #lista_complementar do
+        table.insert(pedidos, lista_complementar[i])
+      end
+      
+      for i = #pedidos, 2, -1 do
+        if pedidos[i] == pedidos[i-1] then
+          table.remove(pedidos, i)
+        end
+      end
+    end
+    
+    local function andar_nao_lista(pedidos, andar)
+      for i=1, #pedidos do
+        if andar == pedidos[i] then
+          return false
+        end
+      end
+      return true
+    end
+    
+    local function reorganiza_pedidos(pedidos, andar, subindo)
+      
+      if andar_nao_lista(pedidos, andar) then
+        
+        local pedidos_novos = {}
+        local inserido = false
+        local condicao
+        
+        for i=1, #pedidos do
+          if subindo then
+            condicao = pedidos[i] > andar
+          else
+            condicao = pedidos[i] < andar
+          end
+          
+          if condicao and not inserido then
+            table.insert(pedidos_novos, andar)
+            inserido = true
+          end
+          
+          table.insert(pedidos_novos, pedidos[i])
+        end
+        
+        if not inserido then
+          table.insert(pedidos_novos, andar)
+        end
+        return pedidos_novos
+      end
+      return pedidos
+    end
+    
+    local function mostra_tabela(nome, tabela)
+      print(nome)
+      for i=1, #tabela do
+        io.write(tabela[i]..',')
+      end
+      io.write('\n')
+    end
+    
+    local function ordena_pedidos(origem, destino)
+      print('origem atual:', origem)
+      print('destino atual:', destino)
+      
+      if #pedidos > 1 then
+        print('Lista preenchida')
+        local lista_subida, lista_descida, lista_complementar = separador_pedidos()
+        
+        if (andar_atual < pedidos[1]) or (#pedidos >= 2 and andar_atual == pedidos[1] and andar_atual < pedidos[2]) then
+          print('Elevador subindo!')
+          
+          if origem < destino then
+            print('Quer subir')
+            
+            if andar_atual < origem then
+              print('Da tempo de atender')
+              
+              lista_subida = reorganiza_pedidos(lista_subida, origem, true)
+              lista_subida = reorganiza_pedidos(lista_subida, destino, true)
+            else
+              print('Nao da tempo')
+              
+              lista_complementar = reorganiza_pedidos(lista_complementar, origem, true)
+              lista_complementar = reorganiza_pedidos(lista_complementar, destino, true)
+            end
+          else
+            print('Quer descer')
+            
+            lista_descida = reorganiza_pedidos(lista_descida, origem, false)
+            lista_descida = reorganiza_pedidos(lista_descida, destino, false)
+          end
+          
+          unificador_pedidos(lista_subida, lista_descida, lista_complementar)
+          
+        elseif (andar_atual > pedidos[1]) or (#pedidos >= 2 and andar_atual == pedidos[1] and andar_atual > pedidos[2]) then
+          print('Elevador descendo')
+          
+          if origem < destino then
+            print('Cliente que subir')
+            
+            lista_subida = reorganiza_pedidos(lista_subida, origem, true)
+            lista_subida = reorganiza_pedidos(lista_subida, destino, true)
+          else
+            print('Cliente quer descer')
+            
+            if andar_atual < origem then
+              print('Da para atender')
+              
+              lista_descida = reorganiza_pedidos(lista_descida, origem, false)
+              lista_descida = reorganiza_pedidos(lista_descida, destino, false)
+            else
+              print('Nao da tempo, vai para complementar')
+              
+              lista_complementar = reorganiza_pedidos(lista_complementar, origem, false)
+              lista_complementar = reorganiza_pedidos(lista_complementar, destino, false)
+            end
+          end
+          unificador_pedidos(lista_descida, lista_subida, lista_complementar)
+        end
+      mostra_tabela('Subida:', lista_subida)
+      mostra_tabela('Descida:', lista_descida)
+      mostra_tabela('Complementar:', lista_complementar)
+      mostra_tabela('Pedidos:', pedidos)
+    else
+      print('Lista vazia ou com elemento unico')
+      
+      table.insert(pedidos, origem)
+      table.insert(pedidos, destino)
+      end
+    end
+    ordena_pedidos(origem, destino)
+  end
+  if pedidos_offline == true then
+    if origem > destino then
+      table.insert(lista_descida, origem)
+      table.insert(lista_descida, destino)
+    else
+      table.insert(lista_subida, origem)
+      table.insert(lista_subida, destino)
+    end
+    table.sort(lista_subida)
+    table.sort(lista_descida, function(a,b)
+      return a > b
+    end)
+    unificador(lista_subida, lista_descida)
+  end
+end
 local function gera_csv(nome)
   arquivo_csv = io.open(nome, 'w')
   arquivo_csv:write('Tempo;Altura;Velocidade\n')
@@ -59,14 +306,15 @@ local function adiciona_csv(tempo, altura, velocidade)
 end
 function elevador.load()
   -- Atributos elevador--
-  pos_y = 350
+  pos_y = 350 --350
+  pos_y_ctp = 350
   vel_y = 0
   acel = 0
   vel_y_max = 150
   vel_porta = 50
   portadir_x = 405
   portaesq_x = 330
-  cam_y = 0
+  cam_y = 2700
   timer_debounce = 0
   
   love.keyboard.setKeyRepeat(true)
@@ -83,9 +331,10 @@ function elevador.load()
   arquivo_fechado = false
   organiza = false
   
-  
   --Reconhecedor andar--
-  leitura_pedidos('pedidos.txt')
+  if pedidos_offline then
+    leitura_pedidos('pedidos.txt')
+  end
   andar_atual = 0
   andar_pedido = pedidos[1]
   indice_andar = 1
@@ -106,6 +355,7 @@ function elevador.load()
     animacao[i] = love.graphics.newImage('Assets/Sprites/SpriteSheets/Sprite_Elevador/Sprite_Elevador_'..i..'.png')
   end
   elev = animacao[frame]
+  contrapeso = love.graphics.newImage('Assets/Sprites/SpriteSheets/contrapeso.png')
   
   --Animacao--
   timer = 0
@@ -116,6 +366,7 @@ function elevador.load()
   --Csv--
   gera_csv('dados.csv')
 end
+
 function elevador.keypressed(key)
   if key >= '0' and key <= '9' then
     debounce = true
@@ -137,16 +388,21 @@ function elevador.keypressed(key)
     end
   end
   print(key_origem, key_destino)
-  --saída--
+  --volta pro menu--
   if key == 'escape' then
     vai_para_menu()
   end
 end
+
+function elevador.mousepressed(x,y,button)
+  
+end
+
 function andares()
   chao = (y_Tela-100)/2
-  for i = 0, 8 do
+  for i = 0, 9 do
   tabela_Andar[i] = chao + 300*(i-1)
-  tabela_Andar[9] = 300*8
+  --tabela_Andar[9] = 300*8
   end
 end
 function elevador.update(dt)
@@ -212,13 +468,16 @@ function elevador.update(dt)
 
   --Reconhecedor de andar atual--
   if subida == true and descida == false then
-    if andar_atual == 8 then
+    if cam_y >= 300 * andar_atual then
+      andar_atual = andar_atual + 1
+    end
+    --[[if andar_atual == 8 then
       if pos_y < 53 then
         andar_atual = andar_atual + 1
       end
     elseif cam_y >= 300 * andar_atual then
       andar_atual = andar_atual + 1
-    end
+    end]]
   elseif subida == false and descida == true then
     if andar_pedido == 0 then
       if cam_y <= (300 * andar_atual) - 300 then
@@ -241,12 +500,12 @@ function elevador.update(dt)
     elseif andar_atual == pedidos[indice_andar] then
       if cam_y >= tabela_Andar[andar_pedido] - 75 then
         acel = -150
-        if andar_pedido == 9 then
+        --[[if andar_pedido == 9 then
           if cam_y == 2400 and pos_y <= 250 then
             subida = false
             timer = timer + dt
-          end
-        elseif cam_y ~= 0 and cam_y > tabela_Andar[andar_pedido] then
+          end]]
+        if cam_y ~= 0 and cam_y > tabela_Andar[andar_pedido] then
           subida = false
           timer = timer + dt
         end
@@ -272,12 +531,12 @@ function elevador.update(dt)
   
   -- Movimento p/ Cima --
   if subida == true then
-    if pos_y <= 300 and cam_y < 2400 then
+    if pos_y <= 300 and cam_y < 2700 then
       pos_y = 300
       cam_y = cam_y + vel_y * dt
-      if cam_y > 2400 then
+      --[[if cam_y > 2400 then
           pos_y = pos_y - vel_y * dt
-      end
+      end]]
     else
       pos_y = pos_y - vel_y * dt
     end
@@ -301,21 +560,31 @@ elseif descida == true then
     vel_y = 0
   end
   
+  -- Mov contrapeso --
+  if subida == true and descida == false then
+    pos_y_ctp = pos_y_ctp + vel_y*dt
+  elseif descida == true  and subida == false then
+    pos_y_ctp = pos_y_ctp - vel_y*dt
+  end
+  
   -- Limite de Posicao e Camera--
   if pos_y >= 350 then
     pos_y = 350
     cam_y = 0
     descida = false
   end
+  if pos_y_ctp >= -350 then
+    pos_y_ctp = -350
+  end
   if cam_y < 0  then
     cam_y = 0
   end
-  if cam_y >= 2400 then
-    cam_y = 2400
+  if cam_y >= 2700 then
+    cam_y = 2700
   end
-  if pos_y <= 50 and cam_y >= 2350 then
+  --[[if pos_y <= 50 and cam_y >= 2350 then
     pos_y = 50
-  end
+  end]]
 end
 
 function elevador.draw()
@@ -324,7 +593,15 @@ function elevador.draw()
   --Fundo elevador--
   lg.setColor( 1, 1, 1)
   lg.draw(fundoelev, 330, pos_y-350, 0, 4.7, 75)
+  --[[
+  --Corda contrapeso--
+  lg.setColor( 0.11, 0.11, 0.11)
+  lg.rectangle('fill', 400, pos_y_ctp - 2240, 10, 500)
   
+  --Contrapeso--
+  lg.setColor(1,1,1)
+  lg.draw(contrapeso, 323.5, pos_y_ctp - 2240, 0, 10, 10)
+  ]]
   --Corda elevador--
   lg.setColor( 0.11, 0.11, 0.11)
   lg.rectangle('fill', 400, pos_y-350, 10, 500)
@@ -333,5 +610,22 @@ function elevador.draw()
   lg.setColor(1,1,1)
   lg.draw(animacao[frame], 320, pos_y + 35, 0, 10.5, 10.5)
   lg.translate(0, cam_y)
+  
+  
+  
 end
+
+function leitura_pedidos(nome)
+  local file = io.open(nome, 'r')
+  local destino
+  local pedido_elev
+  for line in file:lines() do
+    pedido_elev = tonumber(line:sub(1,1))
+    destino = tonumber(line:sub(3,3))
+    organiza_pedidos(pedido_elev, destino)
+  end
+  file:close()
+end
+
+
 return elevador

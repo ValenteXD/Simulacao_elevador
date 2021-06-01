@@ -5,7 +5,9 @@ Eduardo Brandão de Freitas
 João Pedro Covello Valente
 Luís Felipe da Silva Seibel
 
--Para mudar o trajeto do elevador altere os pedidos dentro do arquivo pedidos.txt (0 corresponde ao térreo)
+-Para mudar o trajeto do elevador altere os pedidos dentro do arquivo edidos.txt (0 corresponde ao térreo)
 -Pressionando a tecla R a simulação é reiniciada
 -Pressionando a tecla Esc a simulação é encerrada
 -NÃO pressione a tecla W à menos que se sinta pronto para ver o que é oculto
+-Para utilizar o sistema de pedidos online pressione uma tecla de 0 a 9 enquanto o elevador se movimenta, após a parada total não irá funcionar.
+-Para voltar a funcionar reinicie a simulação

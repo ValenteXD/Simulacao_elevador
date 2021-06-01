@@ -2,7 +2,6 @@ local andar = require 'andar'
 local leitor = require 'leitor'
 local elevador = require 'elevador'
 local whatsapp = require 'whatsapp'
-local app = require 'app'
 local cenario = {}
 local whats = {}
 local anima_tempo = 0
@@ -12,7 +11,6 @@ function cenario.load()
   --Carregado--
   andar.load()
   elevador.load()
-  app.load()
   
   --Sprites--
   love.graphics.setDefaultFilter('nearest','nearest')
@@ -33,8 +31,6 @@ function cenario.load()
 
 end
 function cenario.update(dt)
-  app.update(dt)
-  andar.update(dt)
   
   --Audio:Musica de fundo--
   love.audio.play(musica_fundo)
@@ -70,13 +66,9 @@ function cenario.draw()
   lg.draw(fundo2, 479, 2400, 0, 10, -600*9)
 
   andar.draw()
+  lg.setColor( 1, 1, 1)
+  lg.draw(img, whats[frame], 700, -cam_y + 500, 0, 5, 5)
   
-  --app--
-  app.draw()
-  if active then
-    lg.setColor( 1, 1, 1)
-    lg.draw(img, whats[frame], 700, -cam_y + 500, 0, 5, 5)
-  end
   --[[lg.setColor(1,0,1)
   lg.print(pos_y, 0, -cam_y)
   lg.print(cam_y, 0, -cam_y+15)
@@ -86,14 +78,6 @@ function cenario.draw()
   lg.print(tostring(andar_atual), 0, -cam_y+ 90)
   lg.print(tostring(andar_pedido), 0, -cam_y + 105)
   lg.print(tostring(timer), 0, -cam_y + 150)
-  lg.print(tostring(whats_teste), 0, -cam_y + 165)
-  lg.print(tostring(timer_debounce), 0, -cam_y + 200)
-  lg.print(tostring(debounce), 0, -cam_y + 225)
-  lg.print(tostring(organiza), 0, -cam_y + 250)
-  lg.print(tostring(mov), 0, -cam_y + 275)
-  lg.print(tostring(indice_andar), 0, -cam_y + 295)]]
-  
-  
-  
+  lg.print(tostring(whats_teste), 0, -cam_y + 165)]]
 end
 return cenario
