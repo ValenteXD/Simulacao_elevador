@@ -6,6 +6,7 @@ local pedidos = {0,}
 local arquivo_csv = {}
 local timer_global = 0
 
+
 pedidos_online = false
 pedidos_offline = false
 function leitura_pedidos(nome)
@@ -365,8 +366,13 @@ function elevador.load()
   
   --Csv--
   gera_csv('dados.csv')
+  
+  --Cronometro--
+  elevador.tempo_final = {}
+  elevador.tempos = {}
+  pedido_atual = 1
 end
-
+local input1 = true
 function elevador.keypressed(key)
   if key >= '0' and key <= '9' then
     debounce = true
@@ -375,7 +381,7 @@ function elevador.keypressed(key)
     elseif key_destino == nil then
       key_destino = tonumber(key)
     end
-
+    
     if organiza == true then
       if key_destino then
         organiza_pedidos(key_origem, key_destino)
@@ -386,8 +392,19 @@ function elevador.keypressed(key)
         end
       end
     end
+    
+    --cronômetro de pedidos--
+    
+    if input1 then
+      input1=false
+    else
+      input1 = true
+      table.insert(elevador.tempos, {0, key_destino})
+      io.write('peguei o pedido\no destino é '..elevador.tempos[1][2])
+    end
   end
   print(key_origem, key_destino)
+  
   --volta pro menu--
   if key == 'escape' then
     vai_para_menu()
@@ -405,6 +422,8 @@ function andares()
   --tabela_Andar[9] = 300*8
   end
 end
+
+
 function elevador.update(dt)
   local lk = love.keyboard
   
@@ -585,11 +604,32 @@ elseif descida == true then
   --[[if pos_y <= 50 and cam_y >= 2350 then
     pos_y = 50
   end]]
+  
+  --cronômetro de pedidos--
+  for i = 1, #elevador.tempos do
+      if elevador.tempos[i][1] >= 0 then
+        elevador.tempos[i][1] = elevador.tempos[i][1] + dt
+      end
+      
+      if andar_atual == elevador.tempos[i][2] then
+        io.write('terminei o pedido!\nsó levei '..tostring(elevador.tempos[i][1])..'s\n')
+        table.insert(elevador.tempo_final,elevador.tempos[i][1])
+        elevador.tempos[i] = {-1,99}
+        pedido_atual = pedido_atual + 1
+        table.sort(elevador.tempo_final)
+        tempo_max = string.format('%.0f', tostring(elevador.tempo_final[table.maxn(elevador.tempo_final)]))
+        io.write('o tempo máximo de espera é '..tostring(tempo_max)..'\n')
+      end
+  end
+  if #elevador.tempos >= pedido_atual then
+    tempo_atual = string.format('%.0f',tostring(elevador.tempos[pedido_atual][1]))
+  end
 end
 
 function elevador.draw()
   
   local lg = love.graphics
+  --io.write(tostring(elevador.tempo_final[1])..'\n')
   --Fundo elevador--
   lg.setColor( 1, 1, 1)
   lg.draw(fundoelev, 330, pos_y-350, 0, 4.7, 75)

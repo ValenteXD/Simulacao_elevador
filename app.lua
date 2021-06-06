@@ -1,4 +1,6 @@
 local app = {}
+local n = {}
+
 local elevador = require 'elevador' 
 
 function app.load()
@@ -6,9 +8,15 @@ function app.load()
   app_logo = love.graphics.newImage('Assets/Sprites/SpriteSheets/App/app_logo.png')
   app_caregamento = love.graphics.newImage('Assets/Sprites/SpriteSheets/App/app_loading.png')
   app_manutencao = love.graphics.newImage('Assets/Sprites/SpriteSheets/App/app_manutencao.png')
+  app_tempos = love.graphics.newImage('Assets/Sprites/SpriteSheets/App/app_tempos.png')
+  numeros = love.graphics.newImage('Assets/Sprites/SpriteSheets/App/numeros.png')
+  for i = 1,10 do
+    n[i] = love.graphics.newQuad((i-1) * 4 , 0, 4, 5, numeros:getWidth(), numeros:getHeight())
+  end
   
   app_bool = false
   app_load = false
+  app_crono = false
   
   vx = 133
   v = 75
@@ -73,6 +81,39 @@ function app.draw()
       lg.rectangle('fill', 45, 470 - cam_y, vx_eletrica, 10)
       lg.rectangle('fill', 45, 512 - cam_y, vx_corda, 10)
       lg.rectangle('fill', 45, 554 - cam_y, vx_cabina, 10)
+      if app_crono then
+        lg.setColor(1,1,1)
+        lg.draw(app_tempos, 20, 375 - cam_y, 0, 3.5, 3.5)
+        if tempo_max ~= nil then
+          d1 = tonumber(tempo_max:sub(1,1))
+          u1 = tonumber(tempo_max:sub(2,2))
+          if d1 == 0 then
+            d1 = 10
+          end
+          if u1 == 0 then
+            u1 = 10
+          end
+          lg.draw(numeros,n[d1],190,430 - cam_y,0,3)
+          if u1 ~= nil then
+            lg.draw(numeros,n[u1],202,430 - cam_y,0,3)
+          end
+        end
+        
+        if tempo_atual ~= nil then
+          d2 = tonumber(tempo_atual:sub(1,1))
+          u2 = tonumber(tempo_atual:sub(2,2))
+          if d2 == 0 then
+            d2 = 10
+          end
+          if u2 == 0 then
+            u2 = 10
+          end
+          lg.draw(numeros,n[d2],190,517 - cam_y,0,3)
+          if u2 ~= nil then
+            lg.draw(numeros,n[u2],202,517 - cam_y,0,3)
+          end
+        end
+      end
     end
   end
 end
@@ -81,8 +122,15 @@ function app.mousepressed(x, y, button)
     if app_bool == true then
       if x >= 287 and x <= 297 and y >= 379 and y <= 389 then
         app_bool = false
+        app_crono = false
       end
-      if x >= 245 and x <= 285 and y >= 530 and y <= 570 then
+      if x >= 245 and x <= 285 and y >= 450 and y <= 490 then
+        app_crono = true
+      end
+      if app_crono and x >= 235 and x <= 285 and y >= 540 and y <= 600 then
+        app_crono = false
+      end
+      if x >= 245 and x <= 285 and y >= 530 and y <= 570  and not app_crono then
         vx_cabina = 133
         vx_corda = 133
         vx_eletrica = 133
