@@ -5,13 +5,16 @@ local cenario = require 'cenario'
 local whatsapp = require 'whatsapp'
 local app = require 'app'
 local menu = require 'menu'
+local toolbox = require 'toolbox'
 local estado = menu
 local sim = false
 function vai_para_menu()
   estado = menu 
   sim = false
   menu.load()
-  musica_fundo:pause()
+  if musica_fundo ~= nil then
+    musica_fundo:pause()
+  end
 end
 function vai_para_online()
   estado = elevador
@@ -28,6 +31,10 @@ function vai_para_offline()
   sim = true
   elevador.load()
   cenario.load()
+end
+function vai_para_toolbox()
+  estado = toolbox
+  toolbox.load()
 end
 function love.load()
   estado.load()
