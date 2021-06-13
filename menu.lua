@@ -55,6 +55,7 @@ function menu.load()
 end
 function menu.update(dt)
   mx,my = love.mouse.getPosition()
+  
 end
 function menu.draw()
   love.graphics.setColor(1,1,1)
@@ -75,7 +76,7 @@ function menu.mousepressed(x,y,button)
   if button == 1 and mouse_no_botao(x,y,300,200,200,90) then
     vai_para_offline()
   end
-  if button == 1 and mouse_no_botao(x,y,300,300,200,90) then
+    if button == 1 and mouse_no_botao(x,y,300,300,200,90) then
     vai_para_toolbox()
   end
   if button == 1 and mouse_no_botao(x,y,300,410,200,90) then

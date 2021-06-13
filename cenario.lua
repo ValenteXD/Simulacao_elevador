@@ -1,3 +1,4 @@
+
 local andar = require 'andar'
 local leitor = require 'leitor'
 local elevador = require 'elevador'
@@ -11,12 +12,12 @@ local frame = 1
 function cenario.load()
   --Carregado--
   andar.load()
-  elevador.load()
+  --elevador.load()
   app.load()
   
   --Sprites--
   love.graphics.setDefaultFilter('nearest','nearest')
-  fundo_img = love.graphics.newImage('Assets/Sprites/SpriteSheets/Fundo.png')
+  fundo_img = love.graphics.newImage('Assets/Sprites/SpriteSheets/fundo.png')
   fundo_img_zap1 = love.graphics.newImage('Assets/Sprites/SpriteSheets/Whatsapp/Fundo_zap.png')
   fundo_img_zap2 = love.graphics.newImage('Assets/Sprites/SpriteSheets/Whatsapp/Fundo_zap2.png')
   leitura_sprite('Assets/Sprites/SpriteSheets/Whatsapp/Sprite_Whatsapp.png', whats, 16, 16)
@@ -35,6 +36,7 @@ end
 function cenario.update(dt)
   app.update(dt)
   andar.update(dt)
+  --elevador.update(dt)
   
   --Audio:Musica de fundo--
   love.audio.play(musica_fundo)
@@ -66,9 +68,16 @@ function cenario.draw()
   
   --fundo--
   lg.setColor( 1, 1, 1)
-  lg.draw(fundo1, 0, 2400, 0, 10.3, -600*9)
-  lg.draw(fundo2, 479, 2400, 0, 10, -600*9)
-
+  --lg.draw(fundo1, 0, 2400, 0, 10.3, -600*9)
+  --lg.draw(fundo2, 479, 2400, 0, 10, -600*9)
+  for i = 0, 9, 1 do
+    lg.draw(fundo1,0,300 - 300*(i))
+    --lg.draw(fundo2, -300, 0)
+  end
+  --lg.draw(fundo2, -300, 0)
+  
+  
+  --elevador.draw()
   andar.draw()
   
   --app--
@@ -77,9 +86,9 @@ function cenario.draw()
     lg.setColor( 1, 1, 1)
     lg.draw(img, whats[frame], 700, -cam_y + 500, 0, 5, 5)
   end
-  --[[lg.setColor(1,0,1)
+  lg.setColor(1,0,1)
   lg.print(pos_y, 0, -cam_y)
-  lg.print(cam_y, 0, -cam_y+15)
+  --lg.print(cam_y, 0, -cam_y+15)
   lg.print(vel_y, 0, -cam_y+30)
   lg.print(tostring(subida), 0, -cam_y+ 60)
   lg.print(tostring(descida), 0, -cam_y+ 75)
@@ -91,7 +100,12 @@ function cenario.draw()
   lg.print(tostring(debounce), 0, -cam_y + 225)
   lg.print(tostring(organiza), 0, -cam_y + 250)
   lg.print(tostring(mov), 0, -cam_y + 275)
-  lg.print(tostring(indice_andar), 0, -cam_y + 295)]]
+  lg.print(tostring(indice_andar), 0, -cam_y + 295)
+  
+  lg.print(cam_y, 0, -cam_y+400)
+  lg.print(tabela_Andar[andar_pedido], 0, -cam_y+450)
+  
+  
   
   
   

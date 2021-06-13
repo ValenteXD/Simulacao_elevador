@@ -1,6 +1,8 @@
 local elevador = {}
 local andar = require 'andar'
 local whatsapp = require 'whatsapp'
+local fisica = require 'fisica'
+local app = require 'app'
 local animacao = {}
 local pedidos = {0,}
 local arquivo_csv = {}
@@ -234,7 +236,6 @@ function organiza_pedidos(origem, destino)
             end
           else
             print('Quer descer')
-            
             lista_descida = reorganiza_pedidos(lista_descida, origem, false)
             lista_descida = reorganiza_pedidos(lista_descida, destino, false)
           end
@@ -296,13 +297,16 @@ function organiza_pedidos(origem, destino)
 end
 local function gera_csv(nome)
   arquivo_csv = io.open(nome, 'w')
-  arquivo_csv:write('Tempo;Altura;Velocidade\n')
+  arquivo_csv:write('Tempo;Altura;Velocidade;Forca_Motor;Forca_Tracao;Energia_Motor\n')
 end
-local function adiciona_csv(tempo, altura, velocidade)
+local function adiciona_csv(tempo, altura, velocidade, forca_tracao, forca_motor, energia_motor)
   local line_tempo = tostring(tempo):gsub('%.',',')
   local line_altura = tostring(altura):gsub('%.',',')
   local line_velocidade = tostring(velocidade):gsub('%.',',')
-  local line = line_tempo .. ';' .. line_altura .. ';' .. line_velocidade .. '\n'
+  local line_forca_tracao = tostring(forca_tracao):gsub('%.',',')
+  local line_forca_motor = tostring(forca_motor):gsub('%.',',')
+  local line_energia_motor = tostring(energia_motor):gsub('%.',',')
+  local line = line_tempo .. ';' .. line_altura .. ';' .. line_velocidade .. ';' .. line_forca_tracao .. ';' .. line_forca_motor .. ';' .. line_energia_motor .. '\n'
   arquivo_csv:write(line)
 end
 function elevador.load()
@@ -317,6 +321,11 @@ function elevador.load()
   portaesq_x = 330
   cam_y = 2700
   timer_debounce = 0
+  massa_elevador = 500
+  massa_contrapeso = 250
+  tracao = 0
+  forca_motor = 0
+  energia_motor = 0
   
   love.keyboard.setKeyRepeat(true)
   movendo = false
@@ -331,6 +340,7 @@ function elevador.load()
   debounce = false
   arquivo_fechado = false
   organiza = false
+  mov_elev = true
   
   --Reconhecedor andar--
   if pedidos_offline then
@@ -381,7 +391,7 @@ function elevador.keypressed(key)
     elseif key_destino == nil then
       key_destino = tonumber(key)
     end
-    
+
     if organiza == true then
       if key_destino then
         organiza_pedidos(key_origem, key_destino)
@@ -392,9 +402,6 @@ function elevador.keypressed(key)
         end
       end
     end
-    
-    --cronômetro de pedidos--
-    
     if input1 then
       input1=false
     else
@@ -404,7 +411,6 @@ function elevador.keypressed(key)
     end
   end
   print(key_origem, key_destino)
-  
   --volta pro menu--
   if key == 'escape' then
     vai_para_menu()
@@ -422,14 +428,18 @@ function andares()
   --tabela_Andar[9] = 300*8
   end
 end
-
-
 function elevador.update(dt)
   local lk = love.keyboard
   
   andares()
   
   timer_global = timer_global + dt
+  
+  -- fisica --
+  tracao = tracao + fisica.tracao(massa_contrapeso, acel)
+  forca_motor = forca_motor + fisica.forcaMotor(massa_contrapeso, massa_elevador, acel)
+  energia_motor = energia_motor + fisica.energia(vel_y,dt, massa_contrapeso, massa_elevador, acel)
+  
   
   if debounce == true then
     timer_debounce = timer_debounce + dt
@@ -445,7 +455,7 @@ function elevador.update(dt)
   end
   
   if not arquivo_fechado then
-    adiciona_csv(timer_global, 350 - (pos_y - cam_y), vel_y)
+    adiciona_csv(timer_global, 350 - (pos_y - cam_y), vel_y, tracao, forca_motor, energia_motor)
   end
   
   -- Mov. elevador --
@@ -512,19 +522,19 @@ function elevador.update(dt)
   
   -- Parametros para o movimento e animacao --
   if mov == true then
+    --subir--
     if andar_atual < pedidos[indice_andar] then
       subida = true
       descida = false
       acel = 50
+    --chegou no andar--
     elseif andar_atual == pedidos[indice_andar] then
+      --freiar--
       if cam_y >= tabela_Andar[andar_pedido] - 75 then
         acel = -150
-        --[[if andar_pedido == 9 then
-          if cam_y == 2400 and pos_y <= 250 then
-            subida = false
-            timer = timer + dt
-          end]]
-        if cam_y ~= 0 and cam_y > tabela_Andar[andar_pedido] then
+        --para o elevador e abre a porta--
+        if cam_y ~= 0 and cam_y >= tabela_Andar[andar_pedido] then
+          --print('hahahhahahahahah')
           subida = false
           timer = timer + dt
         end
@@ -534,7 +544,7 @@ function elevador.update(dt)
           end
         end
       end
-    else 
+    elseif andar_atual > pedidos[indice_andar] then
       descida = true
       subida = false
       acel = 50
@@ -549,28 +559,30 @@ function elevador.update(dt)
   end
   
   -- Movimento p/ Cima --
-  if subida == true then
-    if pos_y <= 300 and cam_y < 2700 then
-      pos_y = 300
-      cam_y = cam_y + vel_y * dt
-      --[[if cam_y > 2400 then
-          pos_y = pos_y - vel_y * dt
-      end]]
-    else
-      pos_y = pos_y - vel_y * dt
-    end
-  -- Movimento p/ Baixo--
-elseif descida == true then
-    if pos_y < 300 then
-      pos_y = pos_y + vel_y * dt
-    elseif cam_y > 0  and pos_y >= 300 then
-      pos_y = 300
-      cam_y = cam_y - vel_y * dt
-    else
-      pos_y = pos_y + vel_y * dt
+  if mov_elev then
+    if subida == true then
+      if pos_y <= 300 and cam_y < 2700 then
+        pos_y = 300
+        cam_y = cam_y + vel_y * dt
+        --[[if cam_y > 2400 then
+            pos_y = pos_y - vel_y * dt
+        end]]
+      else
+        pos_y = pos_y - vel_y * dt
+      end
+      -- Movimento p/ Baixo--
+    elseif descida == true then
+        if pos_y < 300 then
+          pos_y = pos_y + vel_y * dt
+        elseif cam_y > 0  and pos_y >= 300 then
+          pos_y = 300
+          cam_y = cam_y - vel_y * dt
+        else
+          pos_y = pos_y + vel_y * dt
+        end
     end
   end
-  
+    
   -- Limite de velocidade --
   if vel_y >= vel_y_max then
     vel_y = vel_y_max
@@ -581,9 +593,10 @@ elseif descida == true then
   
   -- Mov contrapeso --
   if subida == true and descida == false then
-    pos_y_ctp = pos_y_ctp + vel_y*dt
+    pos_y_ctp = pos_y_ctp + vel_y * dt
+    
   elseif descida == true  and subida == false then
-    pos_y_ctp = pos_y_ctp - vel_y*dt
+    pos_y_ctp = pos_y_ctp - vel_y * dt
   end
   
   -- Limite de Posicao e Camera--
@@ -592,9 +605,9 @@ elseif descida == true then
     cam_y = 0
     descida = false
   end
-  if pos_y_ctp >= -350 then
-    pos_y_ctp = -350
-  end
+  --[[if pos_y_ctp >= 350 then
+    pos_y_ctp = 350
+  end]]
   if cam_y < 0  then
     cam_y = 0
   end
@@ -605,7 +618,7 @@ elseif descida == true then
     pos_y = 50
   end]]
   
-  --cronômetro de pedidos--
+  --cronometro de pedidos--
   for i = 1, #elevador.tempos do
       if elevador.tempos[i][1] >= 0 then
         elevador.tempos[i][1] = elevador.tempos[i][1] + dt
@@ -629,19 +642,21 @@ end
 function elevador.draw()
   
   local lg = love.graphics
-  --io.write(tostring(elevador.tempo_final[1])..'\n')
   --Fundo elevador--
   lg.setColor( 1, 1, 1)
-  lg.draw(fundoelev, 330, pos_y-350, 0, 4.7, 75)
-  --[[
+  lg.draw(fundoelev, 330, pos_y-350, 0, 4.8, 75)
+  lg.translate(0, cam_y)
+  
   --Corda contrapeso--
   lg.setColor( 0.11, 0.11, 0.11)
-  lg.rectangle('fill', 400, pos_y_ctp - 2240, 10, 500)
+  lg.rectangle('fill', 400, -2240, 10, pos_y_ctp+70)
   
   --Contrapeso--
   lg.setColor(1,1,1)
-  lg.draw(contrapeso, 323.5, pos_y_ctp - 2240, 0, 10, 10)
-  ]]
+  lg.draw(contrapeso, 323.5, pos_y_ctp -2240, 0, 10, 10)
+  
+  lg.translate(0, -cam_y)
+
   --Corda elevador--
   lg.setColor( 0.11, 0.11, 0.11)
   lg.rectangle('fill', 400, pos_y-350, 10, 500)
@@ -667,5 +682,8 @@ function leitura_pedidos(nome)
   file:close()
 end
 
+function elevador.mousepressed(x,y,button)
+  app.mousepressed(x,y,button)
+end
 
 return elevador

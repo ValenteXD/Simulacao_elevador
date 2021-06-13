@@ -1,7 +1,7 @@
 local app = {}
 local n = {}
 
-local elevador = require 'elevador' 
+--local elevador = require 'elevador' 
 
 function app.load()
   love.graphics.setDefaultFilter('nearest','nearest')
@@ -21,7 +21,7 @@ function app.load()
   vx = 133
   v = 75
   vx_motor = 133
-  v_motor = 2.5
+  v_motor = 2.5 --2.5
   vx_eletrica = 133
   v_eletrica = 2
   vx_corda = 133
@@ -53,6 +53,10 @@ function app.update(dt)
     vx_cabina = vx_cabina - dt*v_cabina
   else
     vx_cabina = 0
+  end
+  
+  if vx_cabina == 0 or vx_corda == 0 or vx_eletrica == 0 or vx_motor == 0 then
+    mov_elev = false
   end
   
   
@@ -131,10 +135,16 @@ function app.mousepressed(x, y, button)
         app_crono = false
       end
       if x >= 245 and x <= 285 and y >= 530 and y <= 570  and not app_crono then
-        vx_cabina = 133
-        vx_corda = 133
-        vx_eletrica = 133
-        vx_motor = 133
+        if vx_cabina == 0 then
+          vx_cabina = 133
+        elseif vx_corda == 0 then
+          vx_corda = 133
+        elseif vx_eletrica == 0 then
+          vx_eletrica = 133
+        elseif vx_motor == 0 then
+          vx_motor = 133
+        end
+        mov_elev = true
       end
     else
       if x >= 20 and x <= 120 and y >= 520 and y <= 570 then

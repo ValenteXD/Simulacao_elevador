@@ -31,8 +31,8 @@ function fisica.energia(Vel,dt, McontP, Melev, acel)
   --resultado em kWh--
 end
   
-  return (McontP - Melev) / (McontP + Melev) * g
+  --return (McontP - Melev) / (McontP + Melev) * g
   
   --resultado em m/s^2--
-end
+--end
 return fisica

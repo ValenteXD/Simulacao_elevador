@@ -8,8 +8,9 @@ local menu = require 'menu'
 local toolbox = require 'toolbox'
 local estado = menu
 local sim = false
+--pedidos_online = true
 function vai_para_menu()
-  estado = menu 
+  estado = menu
   sim = false
   menu.load()
   if musica_fundo ~= nil then
