@@ -297,8 +297,9 @@ function organiza_pedidos(origem, destino)
 end
 local function gera_csv(nome)
   arquivo_csv = io.open(nome, 'w')
-  arquivo_csv:write('Tempo;Altura;Velocidade;Forca_Motor;Forca_Tracao;Energia_Motor\n')
+  arquivo_csv:write('Tempo;Altura;Velocidade;Forca_Tracao;Forca_Motor;Energia_Motor\n')
 end
+
 local function adiciona_csv(tempo, altura, velocidade, forca_tracao, forca_motor, energia_motor)
   local line_tempo = tostring(tempo):gsub('%.',',')
   local line_altura = tostring(altura):gsub('%.',',')
@@ -322,7 +323,7 @@ function elevador.load()
   cam_y = 2700
   timer_debounce = 0
   massa_elevador = 500
-  massa_contrapeso = 250
+  massa_contrapeso = 500 --250
   tracao = 0
   forca_motor = 0
   energia_motor = 0
@@ -436,9 +437,9 @@ function elevador.update(dt)
   timer_global = timer_global + dt
   
   -- fisica --
-  tracao = tracao + fisica.tracao(massa_contrapeso, acel)
+  tracao = fisica.tracao(massa_contrapeso, acel)
   forca_motor = forca_motor + fisica.forcaMotor(massa_contrapeso, massa_elevador, acel)
-  energia_motor = energia_motor + fisica.energia(vel_y,dt, massa_contrapeso, massa_elevador, acel)
+  energia_motor = energia_motor + fisica.energia(vel_y,timer_global, massa_contrapeso, massa_elevador, acel)
   
   
   if debounce == true then

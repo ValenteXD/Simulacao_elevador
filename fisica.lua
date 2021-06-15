@@ -8,13 +8,29 @@ function fisica.peso(m)
 end
 function fisica.tracao(McontP, acel)
   
-  return McontP * acel + fisica.peso(McontP)
+  if acel == 0 then
+    acel = 9.8
+  end
   
+  if subida then
+    return fisica.peso(McontP) -(McontP * acel) 
+  elseif descida then
+    return (McontP * acel) + fisica.peso(McontP)
+  else
+    return fisica.peso(McontP)
+  end
+    
   --resultado em N--
 end
 function fisica.forcaMotor(McontP, Melev, acel)
   
-  return Melev * acel + fisica.peso(Melev) - fisica.tracao(McontP, acel)
+  if subida then
+    return Melev * acel + fisica.peso(Melev) - fisica.tracao(McontP, acel)
+  elseif descida then
+    return Melev * acel + fisica.peso(Melev) - fisica.tracao(McontP, acel)
+  else
+    return 0
+  end
   
   --resultado em N--
 end
