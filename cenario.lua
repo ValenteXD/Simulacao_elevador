@@ -21,6 +21,7 @@ function cenario.load()
   fundo_img_zap1 = love.graphics.newImage('Assets/Sprites/SpriteSheets/Whatsapp/Fundo_zap.png')
   fundo_img_zap2 = love.graphics.newImage('Assets/Sprites/SpriteSheets/Whatsapp/Fundo_zap2.png')
   leitura_sprite('Assets/Sprites/SpriteSheets/Whatsapp/Sprite_Whatsapp.png', whats, 16, 16)
+  mark_img = love.graphics.newImage('Assets/Sprites/SpriteSheets/Whatsapp/Janela_Zap_2.png')
   
   fundo1 = fundo_img
   fundo2 = fundo_img
@@ -61,10 +62,6 @@ function cenario.update(dt)
 end
 function cenario.draw()
   local lg = love.graphics
-  if whats_teste == true then
-    fundo1 = fundo_img_zap1
-    fundo2 = fundo_img_zap2
-  end
   
   --fundo--
   lg.setColor( 1, 1, 1)
@@ -105,7 +102,12 @@ function cenario.draw()
   lg.print(cam_y, 0, -cam_y+400)
   lg.print(tabela_Andar[andar_pedido], 0, -cam_y+450)
   
-  
+  if whats_teste == true then
+    fundo1 = fundo_img_zap1
+    fundo2 = fundo_img_zap2
+    lg.setColor(1,1,1)
+    lg.draw(mark_img, 590, 380, 0, 7, 7)
+  end
   
   
   
