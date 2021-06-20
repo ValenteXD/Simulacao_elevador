@@ -311,19 +311,28 @@ local function adiciona_csv(tempo, altura, velocidade, forca_tracao, forca_motor
   arquivo_csv:write(line)
 end
 function elevador.load()
+  --Atributos customizados--
+  local file = io.open('valores.txt','r')
+  local input={}
+  for line in file:lines() do
+    local linha = line
+    table.insert(input,tonumber(line))
+  end
+  massa_elevador = input[1] --500
+  massa_contrapeso = input[2] --500 --250
+  vel_y_max = input[3] --150
   -- Atributos elevador--
   pos_y = 350 --350
   pos_y_ctp = 350
   vel_y = 0
   acel = 0
-  vel_y_max = 150
+  
   vel_porta = 50
   portadir_x = 405
   portaesq_x = 330
   cam_y = 2700
   timer_debounce = 0
-  massa_elevador = 500
-  massa_contrapeso = 500 --250
+  
   tracao = 0
   forca_motor = 0
   energia_motor = 0

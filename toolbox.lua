@@ -53,19 +53,28 @@ function toolbox.draw()
   lg.setFont(fonte20)
   lg.print('Pressione "ENTER" para selecionar a caixa de texto para editar',90,20)
   lg.setColor(0,0,0)
-  lg.print('Massa do elevador',310,95)
+  lg.print('Massa da cabina',310,95)
   lg.print('Massa do contrapeso',300,185)
-  lg.print('Aceleração',340,275)
-  lg.print('Velocidade máxima',310,365)
+  lg.print('Velocidade máxima',340,275)
+  --lg.print('Aceleração',310,365)
   caixa_texto(texto[1],400,125,1)
   caixa_texto(texto[2],400,215,2)
   caixa_texto(texto[3],400,305,3)
-  caixa_texto(texto[4],400,395,4)
+  --caixa_texto(texto[4],400,395,4)
 end
 function toolbox.mousepressed(x,y,button)
   if button == 1 and mouse_no_botao(x,y,320,470,160,60) then
     local file = io.open('valores.txt','w')
     for i = 1,#texto do
+      if texto[i] == '' or texto[i] == '.' then
+        if i == 1 then
+          texto[i]=500
+        elseif i == 2 then
+          texto[i]=500
+        else
+          texto[i]=150
+        end
+      end
       file:write(texto[i]..'\n')
     end
     file:close()
@@ -87,7 +96,7 @@ function toolbox.keypressed(key)
     texto[atual] = string.sub(texto[atual],1,-2)
   end
   if key == 'return' then
-    if atual < #texto then
+    if atual < 3 then
       atual = atual + 1
     else
       atual = 1
