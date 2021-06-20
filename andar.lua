@@ -1,7 +1,7 @@
 local andar = {}
 local zap = {}
 local r = 0
-local particula = {}
+--local particula = {}
 function andar.load()
   -- Atributos cenario--
   x_tela = love.graphics.getWidth()
@@ -22,18 +22,20 @@ function andar.load()
   mesa_img = love.graphics.newImage('Assets/Sprites/SpriteSheets/Mesa.png')
   
   eletrica = love.graphics.newImage('Assets/Sprites/SpriteSheets/Casa_de_Maquinas/eletrica.png')
-  part = love.graphics.newImage('Assets/Sprites/SpriteSheets/Casa_de_Maquinas/sparks.png')
-  --leitura_sprite('Assets/Sprites/SpriteSheets/Casa_de_Maquinas/sparks.png', particula, 16, 16)
-  for i = 1,4 do
-    particula[i] = love.graphics.newQuad((i-1) * 16 , 0, 16, 16, part:getWidth(), part:getHeight())
-  end
+  part = love.graphics.newImage('Assets/Sprites/SpriteSheets/Casa_de_Maquinas/spark.png')
+  
   motor = love.graphics.newImage('Assets/Sprites/SpriteSheets/Casa_de_Maquinas/motor.png')
   polia = love.graphics.newImage('Assets/Sprites/SpriteSheets/Casa_de_Maquinas/polia.png')
   polia_2 = love.graphics.newImage('Assets/Sprites/SpriteSheets/Casa_de_Maquinas/polia_2.png')
   fundo_maquinas = love.graphics.newImage('Assets/Sprites/SpriteSheets/Casa_de_Maquinas/fundo_maquinas.png')
   
-  indice_part = 1
-  timer_part = 0
+  particula = love.graphics.newParticleSystem(part, 200)
+  particula:setLinearAcceleration(0, 100, 0, 180)
+  particula:setSpeed(-50, 50)
+  particula:setParticleLifetime(1, 1.4)
+  particula:setSpin(5, 6)
+  particula:setSizes(1,0.5,0)
+  timer_part = 3
 end
 function andar.update(dt)
   if subida == true then
@@ -42,18 +44,13 @@ function andar.update(dt)
     r = r -1*dt
   end
   
-  
-  timer_part = timer_part + dt
-  
-  if timer_part > 0.1 then
-      indice_part = indice_part + 1
-      timer_part = 0
+  particula:update(dt)
+  timer_part = timer_part - dt
+  if timer_part <= 1 then
+    particula:emit(40)
+    timer_part = 3
   end
-  if indice_part > 4 then
-    indice_part = 1
-  end
-    
-  end
+end
 function andar.draw()
   local lg = love.graphics
   local chao = (y_Tela-100)/2
@@ -128,7 +125,7 @@ function andar.draw()
   -- Motor --
   lg.setColor(1,1,1)
   lg.draw(motor, 550, 358 - 3000, 0, 12, 12)
-  lg.draw(part,particula[indice_part], 550, 358 - 3000, 0, 12, 12)
+  lg.draw(particula,682, 408-3000)
   
   -- Eletrica --
   lg.draw(eletrica, 160, 400 - 3000, 0, 8, 8)
