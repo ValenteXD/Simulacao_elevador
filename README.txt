@@ -12,4 +12,4 @@ Luís Felipe da Silva Seibel
 -Para utilizar o sistema de pedidos online pressione uma tecla de 0 a 9 enquanto o elevador se movimenta, após a parada total não irá funcionar.
 -Para voltar a funcionar reinicie a simulação
 -A função de demonstrar o menor tempo esta dentro da simulação (Caminho: Monitor, Relógio)
--A opção de menu "toolbox" permite que o usuário altere alguns dos valores que serão usados na simulação (a mudança de valores, por enquanto, não influencia em nada na simulação)
+-A opção de menu "toolbox" permite que o usuário altere alguns dos valores que serão usados na simulação, esses valores podem ser restaurados para os origiais ao registrar um valor vazio ou um "ponto", ou seja, valores não numéricos
