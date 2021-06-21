@@ -359,6 +359,7 @@ function elevador.load()
   app_bool = false
   app_load = false
   
+  
   --Reconhecedor andar--
   if pedidos_offline then
     leitura_pedidos('pedidos.txt')
