@@ -21,9 +21,9 @@ end
 function fisica.forcaMotor(McontP, Melev, acel)
   
   if subida then
-    return Melev * acel + fisica.peso(Melev) - fisica.tracao(McontP, acel)
+    return math.abs(-Melev * acel + fisica.peso(Melev) - fisica.tracao(McontP, acel))
   elseif descida then
-    return Melev * acel + fisica.peso(Melev) - fisica.tracao(McontP, acel)
+    return math.abs(Melev * acel + fisica.peso(Melev) - fisica.tracao(McontP, acel))
   else
     return fisica.peso(Melev) - fisica.tracao(McontP,acel)
   end
