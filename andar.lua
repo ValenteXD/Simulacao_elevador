@@ -38,10 +38,12 @@ function andar.load()
   timer_part = 3
 end
 function andar.update(dt)
-  if subida == true then
-    r = r + 1*dt
-  elseif descida == true then
-    r = r -1*dt
+  if mov_elev == true then
+    if subida == true then
+      r = r + 1*dt
+    elseif descida == true then
+      r = r -1*dt
+    end
   end
   
   particula:update(dt)

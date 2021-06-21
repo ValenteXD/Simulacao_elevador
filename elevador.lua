@@ -217,7 +217,7 @@ function organiza_pedidos(origem, destino)
         print('Lista preenchida')
         local lista_subida, lista_descida, lista_complementar = separador_pedidos()
         
-        if (andar_atual < pedidos[1]) or (#pedidos >= 2 and andar_atual == pedidos[1] and andar_atual < pedidos[2]) then
+        if (andar_atual > pedidos[1]) or (#pedidos >= 2 and andar_atual == pedidos[1] and andar_atual < pedidos[2]) then
           print('Elevador subindo!')
           
           if origem < destino then
@@ -242,7 +242,7 @@ function organiza_pedidos(origem, destino)
           
           unificador_pedidos(lista_subida, lista_descida, lista_complementar)
           
-        elseif (andar_atual > pedidos[1]) or (#pedidos >= 2 and andar_atual == pedidos[1] and andar_atual > pedidos[2]) then
+        elseif (andar_atual < pedidos[1] or (#pedidos >= 2 and andar_atual == pedidos[1] and andar_atual > pedidos[2])) then
           print('Elevador descendo')
           
           if origem < destino then
@@ -276,6 +276,8 @@ function organiza_pedidos(origem, destino)
       
       table.insert(pedidos, origem)
       table.insert(pedidos, destino)
+      
+      mostra_tabela('Pedido:', pedidos)
       end
     end
     ordena_pedidos(origem, destino)
@@ -294,6 +296,7 @@ function organiza_pedidos(origem, destino)
     end)
     unificador(lista_subida, lista_descida)
   end
+  andar_pedido = pedidos[indice_andar]
 end
 local function gera_csv(nome)
   arquivo_csv = io.open(nome, 'w')
@@ -321,6 +324,7 @@ function elevador.load()
   massa_elevador = input[1] --500
   massa_contrapeso = input[2] --500 --250
   vel_y_max = input[3] --150
+  
   -- Atributos elevador--
   pos_y = 350 --350
   pos_y_ctp = 350
@@ -351,6 +355,9 @@ function elevador.load()
   arquivo_fechado = false
   organiza = false
   mov_elev = true
+  
+  app_bool = false
+  app_load = false
   
   --Reconhecedor andar--
   if pedidos_offline then
@@ -441,6 +448,8 @@ end
 function elevador.update(dt)
   local lk = love.keyboard
   
+  
+  
   andares()
   
   timer_global = timer_global + dt
@@ -499,7 +508,7 @@ function elevador.update(dt)
         arquivo_csv:close()
         arquivo_fechado = true
       else
-        andar_pedido = andar_atual + ( pedidos[indice_andar] - andar_atual)
+        andar_pedido = pedidos[indice_andar]
       end
       timer = 0
     end
@@ -540,10 +549,10 @@ function elevador.update(dt)
     --chegou no andar--
     elseif andar_atual == pedidos[indice_andar] then
       --freiar--
-      if cam_y >= tabela_Andar[andar_pedido] - 75 then
+      if cam_y >= tabela_Andar[andar_pedido] - 75 and cam_y <= tabela_Andar[andar_pedido] or andar_pedido == 0 then
         acel = -150
         --para o elevador e abre a porta--
-        if cam_y ~= 0 and cam_y >= tabela_Andar[andar_pedido] then
+        if cam_y ~= 0 and cam_y >= tabela_Andar[andar_pedido] -1 then
           --print('hahahhahahahahah')
           subida = false
           timer = timer + dt
@@ -602,11 +611,13 @@ function elevador.update(dt)
   end
   
   -- Mov contrapeso --
-  if subida == true and descida == false then
-    pos_y_ctp = pos_y_ctp + vel_y * dt
-    
-  elseif descida == true  and subida == false then
-    pos_y_ctp = pos_y_ctp - vel_y * dt
+  if mov_elev then
+    if subida == true and descida == false then
+      pos_y_ctp = pos_y_ctp + vel_y * dt
+      
+    elseif descida == true  and subida == false then
+      pos_y_ctp = pos_y_ctp - vel_y * dt
+    end
   end
   
   -- Limite de Posicao e Camera--

@@ -14,8 +14,7 @@ function app.load()
     n[i] = love.graphics.newQuad((i-1) * 4 , 0, 4, 5, numeros:getWidth(), numeros:getHeight())
   end
   
-  app_bool = false
-  app_load = false
+  
   app_crono = false
   
   vx = 133
@@ -85,6 +84,12 @@ function app.draw()
       lg.rectangle('fill', 45, 470 - cam_y, vx_eletrica, 10)
       lg.rectangle('fill', 45, 512 - cam_y, vx_corda, 10)
       lg.rectangle('fill', 45, 554 - cam_y, vx_cabina, 10)
+      
+      --[[lg.setColor(0,1,0)
+      lg.rectangle('fill', 190, 427 - cam_y, 12, 12)
+      lg.rectangle('fill', 190, 470 - cam_y, 12, 12)
+      lg.rectangle('fill', 190, 510 - cam_y, 12, 12)
+      lg.rectangle('fill', 190, 552 - cam_y, 12, 12)]]
       if app_crono then
         lg.setColor(1,1,1)
         lg.draw(app_tempos, 20, 375 - cam_y, 0, 3.5, 3.5)
