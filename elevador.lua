@@ -1,7 +1,7 @@
 local elevador = {}
 local andar = require 'andar'
 local whatsapp = require 'whatsapp'
-local fisica = require 'fisica'
+local = require 'fisica'
 local app = require 'app'
 local animacao = {}
 local pedidos = {0,}
@@ -457,7 +457,7 @@ function elevador.update(dt)
   
   -- fisica --
   tracao = fisica.tracao(massa_contrapeso, acel)
-  forca_motor = forca_motor + fisica.forcaMotor(massa_contrapeso, massa_elevador, acel)
+  forca_motor = fisica.forcaMotor(massa_contrapeso, massa_elevador, acel)
   energia_motor = energia_motor + fisica.energia(vel_y,timer_global, massa_contrapeso, massa_elevador, acel)
   
   
