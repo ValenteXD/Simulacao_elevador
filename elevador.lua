@@ -1,7 +1,7 @@
 local elevador = {}
 local andar = require 'andar'
 local whatsapp = require 'whatsapp'
-local = require 'fisica'
+local fisica = require 'fisica'
 local app = require 'app'
 local animacao = {}
 local pedidos = {0,}
