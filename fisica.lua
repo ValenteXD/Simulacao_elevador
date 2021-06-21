@@ -6,15 +6,16 @@ function fisica.peso(m)
   
   ---resultado em N-
 end
-function fisica.tracao(McontP, acel)
+function fisica.tracao(McontP,acel)
   
   if subida then
-    return fisica.peso(McontP) - (McontP * acel) 
+    return fisica.peso(McontP) + (McontP * acel) 
   elseif descida then
-    return (McontP * acel) + fisica.peso(McontP)
+    return -(McontP * acel) + fisica.peso(McontP)
   else
     return fisica.peso(McontP)
   end
+  
   --resultado em N--
 end
 function fisica.forcaMotor(McontP, Melev, acel)
@@ -24,7 +25,7 @@ function fisica.forcaMotor(McontP, Melev, acel)
   elseif descida then
     return Melev * acel + fisica.peso(Melev) - fisica.tracao(McontP, acel)
   else
-    return 0
+    return fisica.peso(Melev) - fisica.tracao(McontP,acel)
   end
   
   --resultado em N--
@@ -37,7 +38,7 @@ function fisica.potencia(Vel, McontP, Melev, acel)
 end
 function fisica.energia(Vel,dt, McontP, Melev, acel)
   
-  return fisica.potencia(Vel, McontP, Melev, acel) * dt / 1000 * 3600
+  return fisica.potencia(Vel, McontP, Melev, acel) * dt
   
   --resultado em kWh--
 end
