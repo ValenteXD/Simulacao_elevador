@@ -20,13 +20,13 @@ function app.load()
   vx = 133
   v = 75
   vx_motor = 133
-  v_motor = 2.5 --2.5
+  v_motor = 2.5       -- 2.5
   vx_eletrica = 133
-  v_eletrica = 2
+  v_eletrica = 2      -- 2.0
   vx_corda = 133
-  v_cordas = 1
+  v_cordas = 1        -- 1.0
   vx_cabina = 133
-  v_cabina = 0.5
+  v_cabina = 0.5      -- 0.5
 end
 
 function app.update(dt)
@@ -34,27 +34,31 @@ function app.update(dt)
     vx_motor = vx_motor - dt*v_motor
   else
     vx_motor = 0
+    motor = false
   end
   
   if vx_eletrica > 0 then
     vx_eletrica = vx_eletrica - dt*v_eletrica
   else
     vx_eletrica = 0
+    eletrica = false
   end
   
   if vx_corda > 0 then
     vx_corda = vx_corda - dt*v_cordas
   else
     vx_corda = 0
+    corda = false
   end
   
   if vx_cabina > 0 then
     vx_cabina = vx_cabina - dt*v_cabina
   else
     vx_cabina = 0
+    cabina = false
   end
   
-  if vx_cabina == 0 or vx_corda == 0 or vx_eletrica == 0 or vx_motor == 0 then
+  if vx_corda == 0 or vx_eletrica == 0 or vx_motor == 0 then
     mov_elev = false
   end
   
@@ -142,12 +146,23 @@ function app.mousepressed(x, y, button)
       if x >= 245 and x <= 285 and y >= 530 and y <= 570  and not app_crono then
         if vx_cabina == 0 then
           vx_cabina = 133
+          cabina = true
+          
+          if subida or descida then
+            frame = 1
+          else 
+            frame = 11
+          end
+          
         elseif vx_corda == 0 then
           vx_corda = 133
+          
         elseif vx_eletrica == 0 then
           vx_eletrica = 133
+          
         elseif vx_motor == 0 then
           vx_motor = 133
+          
         end
         mov_elev = true
       end

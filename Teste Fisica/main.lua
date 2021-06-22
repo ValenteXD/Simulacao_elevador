@@ -1,35 +1,32 @@
-PixToMet = 32
-love.physics.setMeter(PixToMet)
+local STI = require 'sti'
 
-local world = love.physics.newWorld(0, 9.81*PixToMet, true)
-
-local objects = {}
-objects.box = {}
-
---Criando uma caixa --
-objects.box.x = 10
-objects.box.y = 20
-objects.box.w = 32
-objects.box.h = 32
-
--- Esqueleto --
-objects.box.body = love.physics.newBody(world, objects.box.x, objects.box.y, 'dynamic')
-
--- Pele --
-objects.box.shape = love.physics.newRectangleShape(objects.box.w, objects.box.h)
-
--- Fisica de fato --                                                              
-objects.box.fixture = love.physics.newFixture(objects.box.body, objects.box.shape, 1) -- 1 = densidade do objeto --
-objects.box.fixture:setRestitution(.9)
+require ('player')
 
 function love.load()
   
+  Map = STI('mapa/1.lua', {'box2d'})
+  World = love.physics.newWorld(0, 0)
+  Map:box2d_init(World)
+  Map.layers.solid.visible = true
+  
+  Player:load()
 end
 
 function love.update(dt)
-  world:update(dt)
+  World:update(dt)
+  Player:update(dt)
 end
 
 function love.draw()
-  love.graphics.rectangle('line', objects.box.body:getX(), objects.box.body:getY(), objects.box.w, objects.box.h)
+  love.graphics.setBackgroundColor(.1, .5, .8)
+  
+  Map:draw(0, 0, 1.5, 1.5)
+  
+  love.graphics.push()
+  love.graphics.scale(1.5, 1.5)
+  
+  Player:draw()
+  
+  love.graphics.pop()
+
 end

@@ -359,6 +359,12 @@ function elevador.load()
   app_bool = false
   app_load = false
   
+  motor = true
+  eletrica = true
+  corda = true
+  
+  cabina = true
+  cab_ida = false
   
   --Reconhecedor andar--
   if pedidos_offline then
@@ -488,30 +494,32 @@ function elevador.update(dt)
   end
   
   -- Porta elevador --
-  if timer > 0.2 and timer < 3 then
-    love.audio.play(sfx_zap)
-    frame = frame + 1
-    if frame > 11 then
-      frame = 11
-    end
-  elseif timer > 4 and timer < 5 then
-    love.audio.play(Elevator_Noise2)
-    frame = frame - 1
-    if frame < 1 then
-      frame = 1
-    end
-  elseif timer >= 5 then
-    indice_andar = indice_andar + 1
-    if not arquivo_fechado then
-      if indice_andar >= #pedidos + 1 then
-        vel_y = 0
-        mov = false
-        arquivo_csv:close()
-        arquivo_fechado = true
-      else
-        andar_pedido = pedidos[indice_andar]
+  if cabina then
+    if timer > 0.2 and timer < 3 then
+      love.audio.play(sfx_zap)
+      frame = frame + 1
+      if frame > 11 then
+        frame = 11
       end
-      timer = 0
+    elseif timer > 4 and timer < 5 then
+      love.audio.play(Elevator_Noise2)
+      frame = frame - 1
+      if frame < 1 then
+        frame = 1
+      end
+    elseif timer >= 5 then
+      indice_andar = indice_andar + 1
+      if not arquivo_fechado then
+        if indice_andar >= #pedidos + 1 then
+          vel_y = 0
+          mov = false
+          arquivo_csv:close()
+          arquivo_fechado = true
+        else
+          andar_pedido = pedidos[indice_andar]
+        end
+        timer = 0
+      end
     end
   end
 
@@ -659,6 +667,38 @@ function elevador.update(dt)
   if #elevador.tempos >= pedido_atual then
     tempo_atual = string.format('%.0f',tostring(elevador.tempos[pedido_atual][1]))
   end
+  
+  -- Catastrofes -- 
+  
+  -- Portas -- 
+  if not cabina then
+    local var = math.random (1,2)
+    
+    love.audio.play(sfx_zap)
+    
+    if var == 1 then
+      if not cab_ida then
+        frame = frame + 1
+      end
+      if frame > 11 then
+        cab_ida = true
+      end
+      if cab_ida then
+        frame = frame - 1
+        if frame < 1 then
+          cab_ida = false
+          frame = 1
+          love.audio.play(sfx_zap)
+        end
+      end
+    elseif var == 2 then
+      if frame > 11 then
+        frame = 11
+      end
+    end
+  end
+  
+  
 end
 
 function elevador.draw()
