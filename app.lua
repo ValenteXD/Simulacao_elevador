@@ -58,7 +58,7 @@ function app.update(dt)
     cabina = false
   end
   
-  if vx_corda == 0 or vx_eletrica == 0 or vx_motor == 0 then
+  if vx_corda == 0 or vx_eletrica == 0 then
     mov_elev = false
   end
   
@@ -145,8 +145,10 @@ function app.mousepressed(x, y, button)
       end
       if x >= 245 and x <= 285 and y >= 530 and y <= 570  and not app_crono then
         if vx_cabina == 0 then
-          vx_cabina = 133
-          cabina = true
+          if not subida and not descida then
+            vx_cabina = 133
+            cabina = true
+          end
           
           if subida or descida then
             frame = 1
@@ -161,7 +163,10 @@ function app.mousepressed(x, y, button)
           vx_eletrica = 133
           
         elseif vx_motor == 0 then
-          vx_motor = 133
+          if not subida and not descida then
+            vx_motor = 133
+            motor = true
+          end
           
         end
         mov_elev = true

@@ -359,12 +359,17 @@ function elevador.load()
   app_bool = false
   app_load = false
   
+  
+  
+  -- catastrofes --
   motor = true
   eletrica = true
   corda = true
   
   cabina = true
   cab_ida = false
+  
+  vel_motor = 0
   
   --Reconhecedor andar--
   if pedidos_offline then
@@ -549,7 +554,7 @@ function elevador.update(dt)
   end
   
   -- Parametros para o movimento e animacao --
-  if mov == true then
+  if mov == true and motor then
     --subir--
     if andar_atual < pedidos[indice_andar] then
       subida = true
@@ -587,7 +592,7 @@ function elevador.update(dt)
   end
   
   -- Movimento p/ Cima --
-  if mov_elev then
+  if mov_elev and motor then
     if subida == true then
       if pos_y <= 300 and cam_y < 2700 then
         pos_y = 300
@@ -612,11 +617,13 @@ function elevador.update(dt)
   end
     
   -- Limite de velocidade --
-  if vel_y >= vel_y_max then
-    vel_y = vel_y_max
-  end
-  if vel_y <= 0 then
-    vel_y = 0
+  if motor then
+    if vel_y >= vel_y_max then
+      vel_y = vel_y_max
+    end
+    if vel_y <= 0 then
+      vel_y = 0
+    end
   end
   
   -- Mov contrapeso --
@@ -638,11 +645,17 @@ function elevador.update(dt)
   --[[if pos_y_ctp >= 350 then
     pos_y_ctp = 350
   end]]
-  if cam_y < 0  then
-    cam_y = 0
+  if motor then
+    if cam_y < 0  then
+      cam_y = 0
+    end
+  elseif not motor then
+    if cam_y < -50 then
+      cam_y = -50
+    end
   end
-  if cam_y >= 2700 then
-    cam_y = 2700
+  if cam_y >= 2740 then
+    cam_y = 2740
   end
   --[[if pos_y <= 50 and cam_y >= 2350 then
     pos_y = 50
@@ -700,6 +713,26 @@ function elevador.update(dt)
     end
   end
   
+  -- Motor (Chocante) --
+  if not motor then
+    if subida then
+      if cam_y <= 2750 then
+        cam_y = cam_y + vel_y * dt
+      end
+    elseif descida then
+      cam_y = cam_y - vel_y * dt
+    end
+  end
+  
+  -- Eletrica --
+  if not eletrica then
+    
+  end
+
+  -- Cordas --
+  if not corda then
+    
+  end
   
 end
 
