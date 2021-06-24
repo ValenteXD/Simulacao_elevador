@@ -430,8 +430,8 @@ function elevador.keypressed(key)
       input1=false
     else
       input1 = true
-      table.insert(elevador.tempos, {0, key_destino})
-      io.write('peguei o pedido\no destino é '..elevador.tempos[1][2])
+      table.insert(elevador.tempos, {0, key_destino, key_origem, false})
+      io.write('peguei o pedido\no destino é '..elevador.tempos[1][2]..'\ne aorigem é '..elevador.tempos[1][3])
     end
   end
   print(key_origem, key_destino)
@@ -653,8 +653,10 @@ function elevador.update(dt)
       if elevador.tempos[i][1] >= 0 then
         elevador.tempos[i][1] = elevador.tempos[i][1] + dt
       end
-      
-      if andar_atual == elevador.tempos[i][2] then
+      if andar_atual == elevador.tempos[i][3] then
+        elevador.tempos[i][4] = true
+      end
+      if andar_atual == elevador.tempos[i][2] and elevador.tempos[i][4] == true then
         io.write('terminei o pedido!\nsó levei '..tostring(elevador.tempos[i][1])..'s\n')
         table.insert(elevador.tempo_final,elevador.tempos[i][1])
         elevador.tempos[i] = {-1,99}

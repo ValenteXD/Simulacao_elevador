@@ -1,6 +1,7 @@
 local andar = {}
 local zap = {}
 local r = 0
+local motor
 --local particula = {}
 function andar.load()
   -- Atributos cenario--
