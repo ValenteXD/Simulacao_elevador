@@ -4,7 +4,7 @@ local whatsapp = require 'whatsapp'
 local fisica = require 'fisica'
 local app = require 'app'
 local animacao = {}
-local pedidos = {0,}
+pedidos = {0,}
 local arquivo_csv = {}
 local timer_global = 0
 

@@ -1,7 +1,6 @@
 local andar = {}
 local zap = {}
 local r = 0
-local motor
 --local particula = {}
 function andar.load()
   -- Atributos cenario--
@@ -22,10 +21,10 @@ function andar.load()
   flor_img = love.graphics.newImage('Assets/Sprites/SpriteSheets/Flor.png')
   mesa_img = love.graphics.newImage('Assets/Sprites/SpriteSheets/Mesa.png')
   
-  eletrica = love.graphics.newImage('Assets/Sprites/SpriteSheets/Casa_de_Maquinas/eletrica.png')
+  ima_eletrica = love.graphics.newImage('Assets/Sprites/SpriteSheets/Casa_de_Maquinas/eletrica.png')
   part = love.graphics.newImage('Assets/Sprites/SpriteSheets/Casa_de_Maquinas/spark.png')
   
-  motor = love.graphics.newImage('Assets/Sprites/SpriteSheets/Casa_de_Maquinas/motor.png')
+  ima_motor = love.graphics.newImage('Assets/Sprites/SpriteSheets/Casa_de_Maquinas/motor.png')
   polia = love.graphics.newImage('Assets/Sprites/SpriteSheets/Casa_de_Maquinas/polia.png')
   polia_2 = love.graphics.newImage('Assets/Sprites/SpriteSheets/Casa_de_Maquinas/polia_2.png')
   fundo_maquinas = love.graphics.newImage('Assets/Sprites/SpriteSheets/Casa_de_Maquinas/fundo_maquinas.png')
@@ -127,11 +126,11 @@ function andar.draw()
   
   -- Motor --
   lg.setColor(1,1,1)
-  lg.draw(motor, 550, 358 - 3000, 0, 12, 12)
+  lg.draw(ima_motor, 550, 358 - 3000, 0, 12, 12)
   lg.draw(particula,682, 408-3000)
   
   -- Eletrica --
-  lg.draw(eletrica, 160, 400 - 3000, 0, 8, 8)
+  lg.draw(ima_eletrica, 160, 400 - 3000, 0, 8, 8)
   
   -- Polias --
   lg.draw(polia, 405, 500 - 3000, r, 6, 6, 15/2, 15/2)
