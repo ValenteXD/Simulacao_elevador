@@ -83,29 +83,28 @@ function cenario.draw()
     lg.setColor( 1, 1, 1)
     lg.draw(img, whats[frame], 700, -cam_y + 500, 0, 5, 5)
   end
-  lg.setColor(1,0.2,.2)
-  lg.print('Pos_y: '..pos_y, 0, -cam_y)
-  lg.print('Cam_y: '..cam_y, 0, -cam_y+15)
-  lg.print('Velocidade: '..vel_y, 0, -cam_y+30)
-  lg.print('Subida: '..tostring(subida), 0, -cam_y+ 60)
-  lg.print('Descida: '..tostring(descida), 0, -cam_y+ 75)
-  lg.print('Andar atual: '..tostring(andar_atual), 0, -cam_y+ 90)
-  lg.print('Andar pedido: '..tostring(andar_pedido), 0, -cam_y + 105)
-  lg.print('Timer andar: '..tostring(timer), 0, -cam_y + 150)
-  lg.print('Whatsapp: '..tostring(whats_teste), 0, -cam_y + 165)
-  lg.print('Timer Debounce: '..tostring(timer_debounce), 0, -cam_y + 200)
-  lg.print('Debounce: '..tostring(debounce), 0, -cam_y + 225)
-  --lg.print(tostring(organiza), 0, -cam_y + 250)
-  lg.print('Bool Mov: '..tostring(mov), 0, -cam_y + 275)
-  lg.print('Indice andar: '..tostring(indice_andar), 0, -cam_y + 295)
+  lg.setColor(1,0,1)
+  lg.print(pos_y, 0, -cam_y)
+  --lg.print(cam_y, 0, -cam_y+15)
+  lg.print(vel_y, 0, -cam_y+30)
+  lg.print(tostring(subida), 0, -cam_y+ 60)
+  lg.print(tostring(descida), 0, -cam_y+ 75)
+  lg.print(tostring(andar_atual), 0, -cam_y+ 90)
+  lg.print(tostring(andar_pedido), 0, -cam_y + 105)
+  lg.print(tostring(timer), 0, -cam_y + 150)
+  lg.print(tostring(whats_teste), 0, -cam_y + 165)
+  lg.print(tostring(timer_debounce), 0, -cam_y + 200)
+  lg.print(tostring(debounce), 0, -cam_y + 225)
+  lg.print(tostring(organiza), 0, -cam_y + 250)
+  lg.print(tostring(mov), 0, -cam_y + 275)
+  lg.print(tostring(indice_andar), 0, -cam_y + 295)
   
-  --lg.print(cam_y, 0, -cam_y+400)
-  lg.print('Posicao pedida: '..tabela_Andar[andar_pedido], 0, -cam_y+450)
-  
-  lg.print('Pedidos: ', 0, -cam_y + 335)
-  for i=1, #pedidos do
-    lg.print(tostring(pedidos[i]), 15*(i-2), -cam_y + 355)
+  for i = 1, #pedidos do
+    lg.print(tostring(pedidos[i]), 15*(i-1), - cam_y + 315)
   end
+  
+  lg.print(cam_y, 0, -cam_y+400)
+  lg.print(tabela_Andar[andar_pedido], 0, -cam_y+450)
   
   if whats_teste == true then
     fundo1 = fundo_img_zap1
