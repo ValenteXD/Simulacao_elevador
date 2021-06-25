@@ -99,6 +99,10 @@ function cenario.draw()
   lg.print(tostring(mov), 0, -cam_y + 275)
   lg.print(tostring(indice_andar), 0, -cam_y + 295)
   
+  for i = 1, #pedidos do
+    lg.print(tostring(pedidos[i]), 15*(i-1), - cam_y + 315)
+  end
+  
   lg.print(cam_y, 0, -cam_y+400)
   lg.print(tabela_Andar[andar_pedido], 0, -cam_y+450)
   
