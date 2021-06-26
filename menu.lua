@@ -1,5 +1,5 @@
 local menu={}
-local background, placa, mx, my
+local background, placa, mx, my, mudo
 local function mouse_no_botao(mx,my,x,y,w,h)
   return mx>=x and mx<=x+w and my>=y and my<=y+h
 end
@@ -52,35 +52,54 @@ function menu.load()
   placa = love.graphics.newImage ('Assets/prata.png')
   fonte70 = love.graphics.newFont(70)
   fonte50 = love.graphics.newFont(50)
+  musica_menu = love.audio.newSource('Assets/Sfx/Normal/Musica_menu.mp3','stream')
+  if startup then
+    love.audio.play(musica_menu)
+    startup = false
+  end
 end
 function menu.update(dt)
+  if mudo then
+    love.audio.setVolume(0)
+  else
+    love.audio.setVolume(1)
+  end
   mx,my = love.mouse.getPosition()
-  
+  startup = false
 end
 function menu.draw()
   love.graphics.setColor(1,1,1)
+  love.graphics.print(tostring(mx)..','..tostring(my),0,0)
   love.graphics.draw(background)
   love.graphics.draw(placa)
   online(400,140)
   offline(400,240)
   toolbox(400,340)
   exit(400,450)
+  love.graphics.rectangle('fill',190,275,50,50)
 end
 function menu.keypressed(key)
-  
+  if key == 'm' then
+    mudo = not mudo
+  end
 end
 function menu.mousepressed(x,y,button)
   if button == 1 and mouse_no_botao(x,y,300,100,200,90) then
     vai_para_online()
+    love.audio.stop()
   end
   if button == 1 and mouse_no_botao(x,y,300,200,200,90) then
     vai_para_offline()
+    love.audio.stop()
   end
     if button == 1 and mouse_no_botao(x,y,300,300,200,90) then
     vai_para_toolbox()
   end
   if button == 1 and mouse_no_botao(x,y,300,410,200,90) then
     love.event.quit()
+  end
+  if button == 1 and mouse_no_botao(x,y,190,275,50,50) then
+    mudo = not mudo
   end
 end
 return menu

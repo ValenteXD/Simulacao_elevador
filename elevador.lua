@@ -443,6 +443,7 @@ function elevador.keypressed(key)
   --volta pro menu--
   if key == 'escape' then
     vai_para_menu()
+    musica_menu:play()
   end
 end
 

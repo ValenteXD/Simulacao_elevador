@@ -38,6 +38,7 @@ function vai_para_toolbox()
   toolbox.load()
 end
 function love.load()
+  startup = true
   estado.load()
   if sim then
     cenario.load()
