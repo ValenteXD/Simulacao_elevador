@@ -1,5 +1,5 @@
 local menu={}
-local background, placa, mx, my, mudo
+local background, placa, mx, my, mudo, volume1, volume0
 local function mouse_no_botao(mx,my,x,y,w,h)
   return mx>=x and mx<=x+w and my>=y and my<=y+h
 end
@@ -53,6 +53,8 @@ function menu.load()
   fonte70 = love.graphics.newFont(70)
   fonte50 = love.graphics.newFont(50)
   musica_menu = love.audio.newSource('Assets/Sfx/Normal/Musica_menu.mp3','stream')
+  volume1 = love.graphics.newImage('Assets/Sprites/SpriteSheets/volume.png')
+  volume0 = love.graphics.newImage('Assets/Sprites/SpriteSheets/mudo.png')
   if startup then
     love.audio.play(musica_menu)
     startup = false
@@ -76,7 +78,12 @@ function menu.draw()
   offline(400,240)
   toolbox(400,340)
   exit(400,450)
-  love.graphics.rectangle('fill',190,275,50,50)
+  love.graphics.setColor(1,1,1)
+  if mudo then
+    love.graphics.draw(volume0,190,275)
+  else
+    love.graphics.draw(volume1,190,275)
+  end
 end
 function menu.keypressed(key)
   if key == 'm' then
