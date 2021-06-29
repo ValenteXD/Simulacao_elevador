@@ -98,7 +98,7 @@ function cenario.draw()
     lg.draw(img, whats[frame], 700, -cam_y + 500, 0, 5, 5)
   end
   
-  lg.setColor(1,0.2,.2)
+  --[[lg.setColor(1,0.2,.2)
   lg.print('Pos_y: '..pos_y, 0, -cam_y)
   lg.print('Cam_y: '..cam_y, 0, -cam_y+15)
   lg.print('Velocidade: '..vel_y, 0, -cam_y+30)
@@ -127,7 +127,7 @@ function cenario.draw()
     fundo2 = fundo_img_zap2
     lg.setColor(1,1,1)
     lg.draw(mark_img, 590, 380, 0, 7, 7)
-  end
+  end]]
   
   
   
