@@ -8,6 +8,7 @@ local menu = require 'menu'
 local toolbox = require 'toolbox'
 local estado = menu
 local sim = false
+local caos = require 'caos'
 --pedidos_online = true
 function vai_para_menu()
   estado = menu
@@ -44,7 +45,7 @@ function love.load()
     cenario.load()
   end
   whatsapp.load()
-  
+  caos.load()
 end
 
 function love.update(dt)
@@ -52,7 +53,7 @@ function love.update(dt)
   if sim then
     cenario.update(dt)
   end
-  
+  caos.update(dt)
   
 end
 
