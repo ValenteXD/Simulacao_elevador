@@ -7,6 +7,7 @@ local animacao = {}
 pedidos = {0,}
 local arquivo_csv = {}
 local timer_global = 0
+local caos = require 'caos'
 
 local queda
 local queda2
@@ -787,7 +788,7 @@ function elevador.draw()
   lg.draw(animacao[frame], 320, pos_y + 35, 0, 10.5, 10.5)
   lg.translate(0, cam_y)
   
-  
+  --caos.draw(400,200) Essa função recebe X e Y
   
 end
 
