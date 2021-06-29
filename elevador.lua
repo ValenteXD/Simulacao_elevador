@@ -8,6 +8,9 @@ pedidos = {0,}
 local arquivo_csv = {}
 local timer_global = 0
 
+local queda
+local queda2
+
 
 pedidos_online = false
 pedidos_offline = false
@@ -371,6 +374,9 @@ function elevador.load()
   
   vel_motor = 0
   
+  queda = false
+  queda2 = false
+  
   --Reconhecedor andar--
   if pedidos_offline then
     leitura_pedidos('pedidos.txt')
@@ -555,7 +561,7 @@ function elevador.update(dt)
   end
   
   -- Parametros para o movimento e animacao --
-  if mov == true and motor then
+  if mov == true and motor and corda then
     --subir--
     if andar_atual < pedidos[indice_andar] then
       subida = true
@@ -593,7 +599,7 @@ function elevador.update(dt)
   end
   
   -- Movimento p/ Cima --
-  if mov_elev and motor then
+  if mov_elev and motor and corda then
     if subida == true then
       if pos_y <= 300 and cam_y < 2700 then
         pos_y = 300
@@ -618,7 +624,7 @@ function elevador.update(dt)
   end
     
   -- Limite de velocidade --
-  if motor then
+  if motor and corda then
     if vel_y >= vel_y_max then
       vel_y = vel_y_max
     end
@@ -726,13 +732,30 @@ function elevador.update(dt)
   end
   
   -- Eletrica --
-  if not eletrica then
-    
-  end
+  --Os codigos estao no cenario.lua
 
   -- Cordas --
   if not corda then
-    
+    queda = true
+    if queda then
+      cam_y = cam_y - vel_y * dt
+      if cam_y <= 0 then
+        cam_y = 0
+        queda = false
+        queda2 = true
+      end
+    end
+    if queda2 then
+      pos_y = pos_y + vel_y* dt
+      if pos_y >= 350 and cam_y <= 0 then
+        pos_y = 350
+        queda2 = false
+      end
+    end
+    if pos_y_ctp >= 2600 then
+      vel_y = 0
+      pos_y_ctp = 2600
+    end
   end
   
 end

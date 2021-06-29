@@ -22,6 +22,8 @@ function cenario.load()
   fundo_img_zap2 = love.graphics.newImage('Assets/Sprites/SpriteSheets/Whatsapp/Fundo_zap2.png')
   leitura_sprite('Assets/Sprites/SpriteSheets/Whatsapp/Sprite_Whatsapp.png', whats, 16, 16)
   mark_img = love.graphics.newImage('Assets/Sprites/SpriteSheets/Whatsapp/Janela_Zap_2.png')
+  escuro = love.graphics.newImage('Assets/Sprites/SpriteSheets/Escuro.png')
+  
   
   fundo1 = fundo_img
   fundo2 = fundo_img
@@ -59,6 +61,14 @@ function cenario.update(dt)
       frame = 1
     end
   end
+  
+  --[[if not eletrica then
+    escuro = escuro1
+  end
+  if eletrica then
+    escuro = escuro2
+  end]]
+  
 end
 function cenario.draw()
   local lg = love.graphics
@@ -76,6 +86,10 @@ function cenario.draw()
   
   --elevador.draw()
   andar.draw()
+  
+  if not eletrica then
+    lg.draw(escuro, 0, 0 - cam_y)
+  end
   
   --app--
   app.draw()
@@ -96,7 +110,7 @@ function cenario.draw()
   lg.print('Whatsapp: '..tostring(whats_teste), 0, -cam_y + 165)
   lg.print('Timer Debounce: '..tostring(timer_debounce), 0, -cam_y + 200)
   lg.print('Debounce: '..tostring(debounce), 0, -cam_y + 225)
-  --lg.print(tostring(organiza), 0, -cam_y + 250)
+  lg.print('Pos_y_Ctp: '..tostring(pos_y_ctp), 0, -cam_y + 250)
   lg.print('Bool Mov: '..tostring(mov), 0, -cam_y + 275)
   lg.print('Indice andar: '..tostring(indice_andar), 0, -cam_y + 295)
   

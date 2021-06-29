@@ -20,13 +20,13 @@ function app.load()
   vx = 133
   v = 75
   vx_motor = 133
-  v_motor = 2.5       -- 2.5
+  v_motor = 0       -- 2.5
   vx_eletrica = 133
-  v_eletrica = 2      -- 2.0
+  v_eletrica = 0      -- 2.0
   vx_corda = 133
-  v_cordas = 1        -- 1.0
+  v_cordas = 10        -- 1.0
   vx_cabina = 133
-  v_cabina = 0.5      -- 0.5
+  v_cabina = 0      -- 0.5
 end
 
 function app.update(dt)
@@ -42,6 +42,7 @@ function app.update(dt)
   else
     vx_eletrica = 0
     eletrica = false
+    mov_elev = false
   end
   
   if vx_corda > 0 then
@@ -56,10 +57,6 @@ function app.update(dt)
   else
     vx_cabina = 0
     cabina = false
-  end
-  
-  if vx_corda == 0 or vx_eletrica == 0 then
-    mov_elev = false
   end
   
   
@@ -158,9 +155,11 @@ function app.mousepressed(x, y, button)
           
         elseif vx_corda == 0 then
           vx_corda = 133
+          corda = true
           
         elseif vx_eletrica == 0 then
           vx_eletrica = 133
+          eletrica = true
           
         elseif vx_motor == 0 then
           if not subida and not descida then
