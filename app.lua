@@ -20,13 +20,13 @@ function app.load()
   vx = 133
   v = 75
   vx_motor = 133
-  v_motor = 0       -- 2.5
+  v_motor = 1.2       -- 1.2
   vx_eletrica = 133
-  v_eletrica = 0      -- 2.0
+  v_eletrica = 2      -- 2.0
   vx_corda = 133
-  v_cordas = 10        -- 1.0
+  v_cordas = 1        -- 1.0
   vx_cabina = 133
-  v_cabina = 0      -- 0.5
+  v_cabina = 1.7      -- 1.7
 end
 
 function app.update(dt)
