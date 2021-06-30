@@ -20,7 +20,7 @@ function app.load()
   vx = 133
   v = 75
   vx_motor = 133
-  v_motor = 10       -- 1.2
+  v_motor = 0.7       -- 0.7
   vx_eletrica = 133
   v_eletrica = 2.0      -- 2.0
   vx_corda = 133
@@ -86,11 +86,6 @@ function app.draw()
       lg.rectangle('fill', 45, 512 - cam_y, vx_corda, 10)
       lg.rectangle('fill', 45, 554 - cam_y, vx_cabina, 10)
       
-      --[[lg.setColor(0,1,0)
-      lg.rectangle('fill', 190, 427 - cam_y, 12, 12)
-      lg.rectangle('fill', 190, 470 - cam_y, 12, 12)
-      lg.rectangle('fill', 190, 510 - cam_y, 12, 12)
-      lg.rectangle('fill', 190, 552 - cam_y, 12, 12)]]
       if app_crono then
         lg.setColor(1,1,1)
         lg.draw(app_tempos, 20, 375 - cam_y, 0, 3.5, 3.5)
@@ -175,6 +170,22 @@ function app.mousepressed(x, y, button)
         app_bool = true
       end
     end
+    
+    --[[lg.setColor(0,1,0)
+      lg.rectangle('fill', 190, 427 - cam_y, 12, 12)
+      lg.rectangle('fill', 190, 470 - cam_y, 12, 12)
+      lg.rectangle('fill', 190, 510 - cam_y, 12, 12)
+      lg.rectangle('fill', 190, 552 - cam_y, 12, 12)]]
+    if x >= 190 and x <= 202 and y >= 427 and y <= 439 then
+      vx_motor = 133
+    elseif x >= 190 and x <= 202 and y >= 470 and y <= 482 then
+      vx_eletrica = 133
+    elseif x >= 190 and x <= 202 and y >= 510 and y <= 522 then
+      vx_corda = 133
+    elseif x >= 190 and x <= 202 and y >= 552 and y <= 564 then
+      vx_cabina = 133
+    end
+    
   end
 end
 return app

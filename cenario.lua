@@ -23,6 +23,7 @@ function cenario.load()
   leitura_sprite('Assets/Sprites/SpriteSheets/Whatsapp/Sprite_Whatsapp.png', whats, 16, 16)
   mark_img = love.graphics.newImage('Assets/Sprites/SpriteSheets/Whatsapp/Janela_Zap_2.png')
   escuro = love.graphics.newImage('Assets/Sprites/SpriteSheets/Escuro.png')
+  aviso = love.graphics.newImage('Assets/Sprites/SpriteSheets/aviso.png')
   
   
   fundo1 = fundo_img
@@ -131,16 +132,12 @@ function cenario.draw()
     lg.draw(mark_img, 590, 380, 0, 7, 7)
   end
   
-  --Game Over--
-  --[[if game_over then
-    lg.setColor(1,1,1)
-    lg.draw(go_chocante, 0,-cam_y, 0, 10, 10)
-    --[[caos.draw(335,400 - cam_y) --Essa função recebe X e Y
-    caos.draw(535,410 - cam_y)
-    caos.draw(460,400 - cam_y)
-    caos.draw(360,420 - cam_y)
-    caos.draw(310,410 - cam_y)]]
-    --lg.rectangle('fill', 235, 450, 330, 60 )]]
+  if app_bool then
+    if vx_motor <= 50 or vx_eletrica <= 50 or vx_corda <= 50 or vx_cabina <= 50 then
+      lg.setColor(1,1,1)
+      lg.draw(aviso, 0, -cam_y, 0, 10, 10)
+    end
+  end
   
 end
 

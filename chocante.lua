@@ -32,7 +32,7 @@ function chocante.draw()
   caos.draw(360,420)
   caos.draw(310,410 )
   --lg.rectangle('fill', 235, 450, 330, 60 )
-  lg.points(235, 450, 565, 510)
+  --lg.points(235, 450, 565, 510)
   
 end
 
