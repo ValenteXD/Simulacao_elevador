@@ -90,32 +90,48 @@ function app.draw()
         lg.setColor(1,1,1)
         lg.draw(app_tempos, 20, 375 - cam_y, 0, 3.5, 3.5)
         if tempo_max ~= nil then
-          d1 = tonumber(tempo_max:sub(1,1))
-          u1 = tonumber(tempo_max:sub(2,2))
+          c1 = tonumber(tempo_max:sub(1,1))
+          d1 = tonumber(tempo_max:sub(2,2))
+          u1 = tonumber(tempo_max:sub(3,3))
+          if c1 == 0 then
+            c1 = 10
+          end
           if d1 == 0 then
             d1 = 10
           end
           if u1 == 0 then
             u1 = 10
           end
-          lg.draw(numeros,n[d1],190,430 - cam_y,0,3)
+          lg.draw(numeros,n[c1],190,430 - cam_y,0,3)
+          if d1 ~= nil then
+            lg.draw(numeros,n[d1],202,430 - cam_y,0,3)
+          end
           if u1 ~= nil then
-            lg.draw(numeros,n[u1],202,430 - cam_y,0,3)
+            lg.draw(numeros,n[u1],214,430 - cam_y,0,3)
           end
         end
         
         if tempo_atual ~= nil then
-          d2 = tonumber(tempo_atual:sub(1,1))
-          u2 = tonumber(tempo_atual:sub(2,2))
+          c2 = tonumber(tempo_atual:sub(1,1))
+          d2 = tonumber(tempo_atual:sub(2,2))
+          u2 = tonumber(tempo_atual:sub(3,3))
+          if c2 == 0 then
+            c2 = 10
+          end
           if d2 == 0 then
             d2 = 10
           end
           if u2 == 0 then
             u2 = 10
           end
-          lg.draw(numeros,n[d2],190,517 - cam_y,0,3)
+          if c2 ~= nil then
+            lg.draw(numeros,n[c2],190,517 - cam_y,0,3)
+          end
+          if d2 ~= nil then
+            lg.draw(numeros,n[d2],202,517 - cam_y,0,3)
+          end
           if u2 ~= nil then
-            lg.draw(numeros,n[u2],202,517 - cam_y,0,3)
+            lg.draw(numeros,n[u2],214,517 - cam_y,0,3)
           end
         end
       end
