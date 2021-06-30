@@ -100,7 +100,12 @@ function cenario.draw()
   end
   
   lg.setColor(1,0.2,.2)
-  lg.print('Pos_y: '..pos_y, 0, -cam_y)
+  lg.setFont(fonte20)
+  lg.print('Pedidos: ', 0, -cam_y)
+  for i=1, #pedidos do
+    lg.print(tostring(pedidos[i])..'-', 20*(i-2), -cam_y + 20)
+  end
+  --[[lg.print('Pos_y: '..pos_y, 0, -cam_y)
   lg.print('Cam_y: '..cam_y, 0, -cam_y+15)
   lg.print('Velocidade: '..vel_y, 0, -cam_y+30)
   lg.print('Subida: '..tostring(subida), 0, -cam_y+ 60)
@@ -124,6 +129,8 @@ function cenario.draw()
   end
   
   lg.print('Game Over: '..tostring(game_over), 0, -cam_y+500)
+  
+  lg.print('Passageiros: '..tostring(m), 0, -cam_y+550)]]
 
   if whats_teste == true then
     fundo1 = fundo_img_zap1

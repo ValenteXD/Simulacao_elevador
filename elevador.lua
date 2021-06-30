@@ -8,10 +8,13 @@ pedidos = {0,}
 local arquivo_csv = {}
 local timer_global = 0
 
+lista_origem = {}
+lista_destino = {}
 
 local queda
 local queda2
 
+m = 0
 
 pedidos_online = false
 pedidos_offline = false
@@ -345,6 +348,11 @@ function elevador.load()
   forca_motor = 0
   energia_motor = 0
   
+  i_or = 1 
+  i_des = 1
+  
+
+  
   love.keyboard.setKeyRepeat(true)
   movendo = false
   subida = false 
@@ -377,6 +385,8 @@ function elevador.load()
   
   queda = false
   queda2 = false
+  
+  acr = true
   
   --Reconhecedor andar--
   if pedidos_offline then
@@ -426,19 +436,23 @@ function elevador.keypressed(key)
     debounce = true
     if key_origem == nil then
       key_origem = tonumber(key)
+      table.insert(lista_origem, key_origem)
+      
     elseif key_destino == nil then
       key_destino = tonumber(key)
+      table.insert(lista_destino, key_destino)
     end
-
     if organiza == true then
       if key_destino then
         organiza_pedidos(key_origem, key_destino)
         organiza = false
+        mov = true
         if mov == false then
           --mov = true
           --andar_pedido = andar_atual + ( pedidos[indice_andar] - andar_atual)
         end
       end
+      
     end
     if input1 then
       input1=false
@@ -470,6 +484,14 @@ end
 function elevador.update(dt)
   local lk = love.keyboard
   
+  for i=1, #elevador.tempos do
+    if elevador.tempos[i][4] == true then
+      acr = true
+    end
+    if elevador.tempos[i][2] == andar_atual and elevador.tempos[i][4] == true then
+      acr = false
+    end
+  end
   
   
   andares()
@@ -774,6 +796,12 @@ function elevador.update(dt)
   end
   
   
+end
+
+if acr then
+  m = m + 1 
+elseif not acr then
+  m = m - 1
 end
 
 function elevador.draw()

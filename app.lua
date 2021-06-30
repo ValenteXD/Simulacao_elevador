@@ -176,15 +176,15 @@ function app.mousepressed(x, y, button)
       lg.rectangle('fill', 190, 470 - cam_y, 12, 12)
       lg.rectangle('fill', 190, 510 - cam_y, 12, 12)
       lg.rectangle('fill', 190, 552 - cam_y, 12, 12)]]
-    if x >= 190 and x <= 202 and y >= 427 and y <= 439 then
-      vx_motor = 133
-    elseif x >= 190 and x <= 202 and y >= 470 and y <= 482 then
-      vx_eletrica = 133
-    elseif x >= 190 and x <= 202 and y >= 510 and y <= 522 then
-      vx_corda = 133
-    elseif x >= 190 and x <= 202 and y >= 552 and y <= 564 then
-      vx_cabina = 133
-    end
+      if x >= 190 and x <= 202 and y >= 427 and y <= 439 and motor then
+        vx_motor = 133
+      elseif x >= 190 and x <= 202 and y >= 470 and y <= 482 and eletrica then
+        vx_eletrica = 133
+      elseif x >= 190 and x <= 202 and y >= 510 and y <= 522 and corda then
+        vx_corda = 133
+      elseif x >= 190 and x <= 202 and y >= 552 and y <= 564 and cabina then
+        vx_cabina = 133
+      end
     
   end
 end
