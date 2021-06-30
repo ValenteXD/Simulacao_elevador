@@ -53,6 +53,7 @@ function menu.load()
   fonte70 = love.graphics.newFont(70)
   fonte50 = love.graphics.newFont(50)
   musica_menu = love.audio.newSource('Assets/Sfx/Normal/Musica_menu.mp3','stream')
+  musica_menu:setLooping(true)
   volume1 = love.graphics.newImage('Assets/Sprites/SpriteSheets/volume.png')
   volume0 = love.graphics.newImage('Assets/Sprites/SpriteSheets/mudo.png')
   if startup then

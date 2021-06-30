@@ -10,7 +10,6 @@ local estado = menu
 local sim = false
 local caos = require 'caos'
 local chocante = require 'chocante'
-
 --pedidos_online = true
 function vai_para_menu()
   estado = menu
@@ -41,6 +40,8 @@ function vai_para_toolbox()
   toolbox.load()
 end
 function love.load()
+  flash_timer = 0.5
+  flash = false
   game_over = false
   startup = true
   estado.load()
@@ -63,10 +64,20 @@ function love.update(dt)
     estado = chocante
     sim = false
   end
-  
+  if flash then
+    flash_timer = flash_timer - dt
+  end
+  if flash_timer == 0 then
+    flash_timer = 0.8
+    flash = false
+  end
 end
 
 function love.draw()
+  if flash then
+    love.graphics.setColor(1,1,1)
+    love.graphics.rectangle('fill',0,0,love.graphics.getWidth(),love.graphics.getHeight())
+  end
   estado.draw()
   if sim then
     cenario.draw()
@@ -103,8 +114,10 @@ function love.mousepressed(x,y, button)
     game_over = false
     if pedidos_offline then
       vai_para_offline()
+      love.audio.stop()
     elseif pedidos_online then
       vai_para_online()
+      love.audio.stop()
     end
     end
   end

@@ -765,8 +765,12 @@ function elevador.update(dt)
   end
   
   --Game Over --
+  if not motor and cam_y>=1300 then
+    batida:play()
+  end
   if cam_y >= 2740 then
     game_over = true
+    flash = true
   end
   
   
