@@ -9,6 +9,8 @@ local toolbox = require 'toolbox'
 local estado = menu
 local sim = false
 local caos = require 'caos'
+local chocante = require 'chocante'
+
 --pedidos_online = true
 function vai_para_menu()
   estado = menu
@@ -39,6 +41,7 @@ function vai_para_toolbox()
   toolbox.load()
 end
 function love.load()
+  game_over = false
   startup = true
   estado.load()
   if sim then
@@ -46,6 +49,7 @@ function love.load()
   end
   whatsapp.load()
   caos.load()
+  chocante.load()
 end
 
 function love.update(dt)
@@ -54,6 +58,11 @@ function love.update(dt)
     cenario.update(dt)
   end
   caos.update(dt)
+  
+  if game_over then
+    estado = chocante
+    sim = false
+  end
   
 end
 
@@ -70,11 +79,34 @@ function love.keypressed(key, scancode, isrepeat)
   if key=='r' then
     love.event.quit('restart')
   end
+  
+  if key == 'h' then
+    game_over = false
+    if pedidos_offline then
+      vai_para_offline()
+    elseif pedidos_online then
+      vai_para_online()
+    end
+  end
+  
 end
 function love.mousepressed(x,y, button)
   estado.mousepressed(x,y,button)
+  --chocante.mousepressed(x,y,button)
   whatsapp.mousepressed(x,y,button)
   if sim then
     app.mousepressed(x,y,button)
   end
+  
+  if button == 1 then
+    if game_over and x >= 235 and x <= 565 and y >= 450 and y <= 510 then
+    game_over = false
+    if pedidos_offline then
+      vai_para_offline()
+    elseif pedidos_online then
+      vai_para_online()
+    end
+    end
+  end
+  
 end

@@ -7,7 +7,7 @@ local animacao = {}
 pedidos = {0,}
 local arquivo_csv = {}
 local timer_global = 0
-local caos = require 'caos'
+
 
 local queda
 local queda2
@@ -404,6 +404,8 @@ function elevador.load()
   elev = animacao[frame]
   contrapeso = love.graphics.newImage('Assets/Sprites/SpriteSheets/contrapeso.png')
   
+  
+  
   --Animacao--
   timer = 0
   animacao_Timer = 0
@@ -729,6 +731,9 @@ function elevador.update(dt)
       end
     elseif descida then
       cam_y = cam_y - vel_y * dt
+      if cam_y <= -50 then
+        game_over = true
+      end
     end
   end
   
@@ -759,6 +764,12 @@ function elevador.update(dt)
     end
   end
   
+  --Game Over --
+  if cam_y >= 2740 then
+    game_over = true
+  end
+  
+  
 end
 
 function elevador.draw()
@@ -787,8 +798,6 @@ function elevador.draw()
   lg.setColor(1,1,1)
   lg.draw(animacao[frame], 320, pos_y + 35, 0, 10.5, 10.5)
   lg.translate(0, cam_y)
-  
-  --caos.draw(400,200) Essa função recebe X e Y
   
 end
 

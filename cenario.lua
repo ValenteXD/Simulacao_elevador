@@ -98,7 +98,7 @@ function cenario.draw()
     lg.draw(img, whats[frame], 700, -cam_y + 500, 0, 5, 5)
   end
   
-  --[[lg.setColor(1,0.2,.2)
+  lg.setColor(1,0.2,.2)
   lg.print('Pos_y: '..pos_y, 0, -cam_y)
   lg.print('Cam_y: '..cam_y, 0, -cam_y+15)
   lg.print('Velocidade: '..vel_y, 0, -cam_y+30)
@@ -121,15 +121,27 @@ function cenario.draw()
   for i=1, #pedidos do
     lg.print(tostring(pedidos[i]), 15*(i-2), -cam_y + 355)
   end
+  
+  lg.print('Game Over: '..tostring(game_over), 0, -cam_y+500)
 
   if whats_teste == true then
     fundo1 = fundo_img_zap1
     fundo2 = fundo_img_zap2
     lg.setColor(1,1,1)
     lg.draw(mark_img, 590, 380, 0, 7, 7)
-  end]]
+  end
   
-  
+  --Game Over--
+  --[[if game_over then
+    lg.setColor(1,1,1)
+    lg.draw(go_chocante, 0,-cam_y, 0, 10, 10)
+    --[[caos.draw(335,400 - cam_y) --Essa função recebe X e Y
+    caos.draw(535,410 - cam_y)
+    caos.draw(460,400 - cam_y)
+    caos.draw(360,420 - cam_y)
+    caos.draw(310,410 - cam_y)]]
+    --lg.rectangle('fill', 235, 450, 330, 60 )]]
   
 end
+
 return cenario
