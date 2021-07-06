@@ -11,8 +11,6 @@ local timer_global = 0
 lista_origem = {}
 lista_destino = {}
 
-local queda
-local queda2
 
 m = 0
 
@@ -754,7 +752,6 @@ function elevador.update(dt)
     elseif descida then
       cam_y = cam_y - vel_y * dt
       if cam_y <= -50 then
-        game_over = true
       end
     end
   end
@@ -762,10 +759,10 @@ function elevador.update(dt)
   -- Eletrica --
   --Os codigos estao no cenario.lua
 
-  -- Cordas --
+  -- Cordas (chocante) --
   if not corda then
     queda = true
-    if queda then
+    if queda and (subida or descida) then
       cam_y = cam_y - vel_y * dt
       if cam_y <= 0 then
         cam_y = 0
@@ -777,20 +774,26 @@ function elevador.update(dt)
       pos_y = pos_y + vel_y* dt
       if pos_y >= 350 and cam_y <= 0 then
         pos_y = 350
-        queda2 = false
       end
-    end
-    if pos_y_ctp >= 2600 then
-      vel_y = 0
-      pos_y_ctp = 2600
     end
   end
   
   --Game Over --
-  if not motor and cam_y>=1300 then
+  --[[if not motor and cam_y>=1300 or queda2 then
     batida:play()
+  end]]
+  if pos_y >= 350 and cam_y <= 0 and queda2 then
+    batida:play()
+    game_over = true
+    flash = true
+  end
+  if cam_y <= -50 and not motor then
+    batida:play()
+    game_over = true
+    flash = true
   end
   if cam_y >= 2740 then
+    batida:play()
     game_over = true
     flash = true
   end

@@ -149,8 +149,10 @@ function app.mousepressed(x, y, button)
           end
           
         elseif vx_corda == 0 then
+        if not subida and not descida then
           vx_corda = 133
           corda = true
+        end
           
         elseif vx_eletrica == 0 then
           vx_eletrica = 133

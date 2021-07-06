@@ -105,6 +105,10 @@ function cenario.draw()
   for i=1, #pedidos do
     lg.print(tostring(pedidos[i])..'-', 20*(i-2), -cam_y + 20)
   end
+  
+  --lg.print('Corda:'..tostring(corda), 0, -cam_y+40)
+  --lg.print('Queda:'..tostring(v_motor), 0, -cam_y+60)
+  --lg.print('Queda2:'..tostring(queda2), 0, -cam_y+80)
   --[[lg.print('Pos_y: '..pos_y, 0, -cam_y)
   lg.print('Cam_y: '..cam_y, 0, -cam_y+15)
   lg.print('Velocidade: '..vel_y, 0, -cam_y+30)
