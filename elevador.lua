@@ -457,7 +457,7 @@ function elevador.keypressed(key)
     else
       input1 = true
       table.insert(elevador.tempos, {0, key_destino, key_origem, false})
-      io.write('peguei o pedido\no destino é '..elevador.tempos[1][2]..'\ne aorigem é '..elevador.tempos[1][3])
+      --io.write('peguei o pedido\no destino é '..elevador.tempos[1][2]..'\ne aorigem é '..elevador.tempos[1][3])
     end
   end
   print(key_origem, key_destino)
@@ -471,7 +471,6 @@ end
 function elevador.mousepressed(x,y,button)
   
 end
-
 function andares()
   chao = (y_Tela-100)/2
   for i = 0, 9 do
@@ -702,7 +701,7 @@ function elevador.update(dt)
       if andar_atual == elevador.tempos[i][2] and elevador.tempos[i][4] == true then
         io.write('terminei o pedido!\nsó levei '..tostring(elevador.tempos[i][1])..'s\n')
         table.insert(elevador.tempo_final,elevador.tempos[i][1])
-        elevador.tempos[i] = {-1,99}
+        elevador.tempos[i] = {-1,99,99,false}
         pedido_atual = pedido_atual + 1
         table.sort(elevador.tempo_final)
         tempo_max = string.format('%.0f', tostring(elevador.tempo_final[table.maxn(elevador.tempo_final)]))
@@ -712,7 +711,6 @@ function elevador.update(dt)
   if #elevador.tempos >= pedido_atual then
     tempo_atual = string.format('%.0f',tostring(elevador.tempos[pedido_atual][1]))
   end
-  
   -- Catastrofes -- 
   
   -- Portas -- 

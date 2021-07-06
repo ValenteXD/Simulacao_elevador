@@ -90,7 +90,11 @@ function love.keypressed(key, scancode, isrepeat)
   if key=='r' then
     love.event.quit('restart')
   end
-  
+  if key == ',' and pedido_atual ~= 1 then
+    pedido_atual = pedido_atual - 1
+  elseif key == '.' then
+    pedido_atual = pedido_atual + 1
+  end
   if key == 'h' then
     game_over = false
     if pedidos_offline then
