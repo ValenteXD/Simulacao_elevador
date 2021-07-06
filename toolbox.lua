@@ -48,7 +48,7 @@ function toolbox.draw()
   lg.setColor(1,1,1)
   lg.draw(background)
   lg.draw(placa)
-  botao(400,470)
+  botao(400,400)
   lg.setColor(1,1,1)
   lg.setFont(fonte20)
   lg.print('Pressione "ENTER" para selecionar a caixa de texto para editar',90,20)
@@ -63,7 +63,7 @@ function toolbox.draw()
   --caixa_texto(texto[4],400,395,4)
 end
 function toolbox.mousepressed(x,y,button)
-  if button == 1 and mouse_no_botao(x,y,320,470,160,60) then
+  if button == 1 and mouse_no_botao(x,y,320,400,160,60) then
     local file = io.open('valores.txt','w')
     for i = 1,#texto do
       if texto[i] == '' or texto[i] == '.' then
